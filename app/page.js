@@ -6,7 +6,7 @@ const signs = db.prepare("SELECT * FROM signs LIMIT 10").all();
 
 export default function Page() {
   return <>
-    <h1>Hello, Next.js!</h1>
+    <h1 className="text-3xl">Hello, Next.js!</h1>
     <ul>
       {signs.map(s => <li>
         <Link href={`/signo/${s.number}`}>
