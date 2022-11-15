@@ -1,17 +1,19 @@
-import Link from 'next/link';
+'use client';
 
-import Database from 'better-sqlite3';
-const db = new Database(process.env.DB_PATH);
-const signs = db.prepare("SELECT * FROM signs LIMIT 10").all();
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Page() {
-  return <>
-    <h1 className="text-3xl">Hello, Next.js!</h1>
-    <ul>
-      {signs.map(s => <li>
-        <Link href={`/signo/${s.number}`}>
-          {s.number} - {s.notation} - {s.gloss}
-        </Link></li>)}
-    </ul>
-  </>;
+  const [search, setSearch] = useState("");
+  const router = useRouter();
+  const searchUrl = `/buscar?parametros=${search}`;
+  const doSearch = e => {
+    e.preventDefault();
+    router.push(searchUrl);
+  };
+  return <form onSubmit={doSearch}>
+    <input type="text" onChange={e => setSearch(e.target.value)} value={search} />
+    <Link href={searchUrl}>Buscar</Link>
+  </form>;
 }
