@@ -1,0 +1,1 @@
+- In production, proxy video url with nginx.
