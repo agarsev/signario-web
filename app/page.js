@@ -7,7 +7,7 @@ import { useState } from 'react';
 export default function Page() {
   const [search, setSearch] = useState("");
   const router = useRouter();
-  const searchUrl = `/buscar?parametros=${search}`;
+  const searchUrl = `/buscar?parametros=${encodeURIComponent(search)}`;
   const doSearch = e => {
     e.preventDefault();
     router.push(searchUrl);

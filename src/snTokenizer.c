@@ -1,6 +1,5 @@
 /*
- * Tokenizer for signotation adapted to FTS in sqlite3, based on
- * fts3_tokenizer1.c.
+ * Tokenizer for signotation adapted to FTS in sqlite3.
  * 
  * @author  Antonio F. G. Sevilla <antonio@garciasevilla.com>
  * @date    2022-11-28
@@ -117,7 +116,7 @@ static bool maybeOutput(sn_tokenizer_cursor *cursor, int *pnBytes,
     cursor->buffer[cursor->tail] = '\0';
     *pnBytes = cursor->tail;
     cursor->tail = 0;
-    *piEndOffset = cursor->index;
+    *piEndOffset = cursor->index>cursor->tokenstart?cursor->index:cursor->tokenstart+1;
     *piPosition = cursor->ntoken++;
     return true;
 }
@@ -213,8 +212,25 @@ static int registerTokenizer(sqlite3 *db, char *zName, const sqlite3_tokenizer_m
     return sqlite3_finalize(pStmt);
 }
 
+// USE: snrank(matchinfo(<table>, 'pxl'))
+static void snRank(sqlite3_context *pCtx, int nVal, sqlite3_value **apVal) {
+    unsigned int *matchinfo = (unsigned int *) sqlite3_value_blob(apVal[0]);
+    int segments = matchinfo[0]; // p
+    int i=0;
+    double score = 0.0;
+    for (i=1; i<1+3*segments; i+=3) { // x
+        int termf = matchinfo[i];
+        int totalf = matchinfo[i+1];
+        score += (double) termf / (double) totalf;
+    }
+    double len = (double) matchinfo[i]; // l
+    sqlite3_result_double(pCtx, score / len);
+}
+
 int sqlite3_extension_init(sqlite3 *db, char **error, const sqlite3_api_routines *api) {
     SQLITE_EXTENSION_INIT2(api);
     registerTokenizer(db, "signotation", &tokenizer);
+    sqlite3_create_function(db, "snrank", 1, SQLITE_UTF8 | SQLITE_DETERMINISTIC,
+            NULL, snRank, NULL, NULL);
     return SQLITE_OK;
 }
