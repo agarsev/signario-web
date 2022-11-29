@@ -4,6 +4,13 @@
  * 
  * @author  Antonio F. G. Sevilla <antonio@garciasevilla.com>
  * @date    2022-11-28
+ *
+ * For skipgram searches, clients should:
+ * Search clients should 
+ * - split on ":"
+ * - substitute and split "[" for "H2" and "(" for "ARC"
+ * - remove "]" and ")"
+ * - translate "*" to something else
  */
 
 #include <string.h>
@@ -54,14 +61,13 @@ typedef struct sn_tokenizer {
     sqlite3_tokenizer base;
 } sn_tokenizer;
 
-#define BUFFER_SIZE 20
+#define BUFFER_SIZE 12 // There shouldn't be tokens longer than this
 typedef struct sn_tokenizer_cursor {
     sqlite3_tokenizer_cursor base;
     const char *input; int inputsize;
     int index; int tokenstart; int ntoken;
-    char buffer[BUFFER_SIZE];
-    char *head; char *tail;
-    //char *buffer; int buffersize;
+    char buffer[BUFFER_SIZE]; int tail;
+    bool repeat;
 } sn_tokenizer_cursor;
 
 static int snCreate(int argc, const char * const *argv, sqlite3_tokenizer **ppTokenizer) {
@@ -91,10 +97,6 @@ static int snOpen(sqlite3_tokenizer *pTokenizer, const char *pInput, int nBytes,
     } else {
         cursor->inputsize = nBytes;
     }
-    cursor->head = cursor->tail = cursor->buffer;
-    //cursor->index = 0; cursor->tokenstart = 0; cursor->ntoken = 0;
-    //cursor->inH2 = 0;
-    //cursor->buffer = NULL; cursor->buffersize = 0;
 
     *ppCursor = &cursor->base;
     return SQLITE_OK;
@@ -107,16 +109,33 @@ static int snClose(sqlite3_tokenizer_cursor *pCursor){
     return SQLITE_OK;
 }
 
-bool emitToken(sn_tokenizer_cursor *cursor, int *pnBytes,
+static bool maybeOutput(sn_tokenizer_cursor *cursor, int *pnBytes,
         int *piStartOffset, int *piEndOffset, int *piPosition) {
+    if (cursor->tail<1) return false;
     *piStartOffset = cursor->tokenstart;
-    cursor->tokenstart = cursor->index+1;
-    if ((cursor->tail-cursor->head)<1) return false;
-    *pnBytes = cursor->tail-cursor->buffer;
-    cursor->tail = cursor->head;
+    if (!cursor->repeat) cursor->tokenstart = cursor->index+1;
+    cursor->buffer[cursor->tail] = '\0';
+    *pnBytes = cursor->tail;
+    cursor->tail = 0;
     *piEndOffset = cursor->index;
     *piPosition = cursor->ntoken++;
     return true;
+}
+
+static bool delim(char c) {
+    return c == ':' || c == ' ' || c == ']' || c == ')';
+}
+
+static bool minusSpace(char c) {
+    return c == 'h' || c == 'l' || c == 'f' || c == 'b' || c == 'y' || c == 'x';
+}
+
+static bool mayusSpace(char c) {
+    return c == 'H' || c == 'L' || c == 'F' || c == 'B' || c == 'Y' || c == 'X';
+}
+
+static bool ignored(char c) {
+    return c == ',' || c == '_';
 }
 
 static int snNext(sqlite3_tokenizer_cursor *pCursor,
@@ -125,29 +144,53 @@ static int snNext(sqlite3_tokenizer_cursor *pCursor,
 
     sn_tokenizer_cursor *cursor = (sn_tokenizer_cursor *) pCursor;
     *ppToken = cursor->buffer;
-    bool wasThereToken = false;
+    bool shouldEmit = false;
 
     while (cursor->index < cursor->inputsize) {
         const char c = cursor->input[cursor->index];
 
-        if (c == ':' || c == ' ') {
-            wasThereToken = emitToken(cursor, pnBytes, piStartOffset, piEndOffset, piPosition);
-        } else if (c == '[') {
-            wasThereToken = emitToken(cursor, pnBytes, piStartOffset, piEndOffset, piPosition);
-            cursor->buffer[0]='H';
-            cursor->buffer[1]='2';
-            cursor->head = cursor->tail = cursor->buffer+2;
-        } else if (c == ']') {
-            wasThereToken = emitToken(cursor, pnBytes, piStartOffset, piEndOffset, piPosition);
-            cursor->head = cursor->tail = cursor->buffer;
-        } else if ((cursor->tail-cursor->buffer)<BUFFER_SIZE) {
-            *(cursor->tail++) = c;
+        if (delim(c)) {
+            shouldEmit = maybeOutput(cursor, pnBytes, piStartOffset, piEndOffset, piPosition);
+        } else if (c == '[' || c == '(') {
+            if (!cursor->repeat) {
+                cursor->repeat = true;
+            } else if (c == '[') {
+                #pragma GCC diagnostic push
+                #pragma GCC diagnostic ignored "-Wstringop-truncation"
+                cursor->repeat = false;
+                strncpy(cursor->buffer, "H2", 2);
+                cursor->tail = 2;
+            } else if (c == '(') {
+                cursor->repeat = false;
+                strncpy(cursor->buffer, "ARC", 3);
+                cursor->tail = 3;
+                #pragma GCC diagnostic pop
+            }
+            shouldEmit = maybeOutput(cursor, pnBytes, piStartOffset, piEndOffset, piPosition);
+        } else if (ignored(c)) {
+            // pass
+        } else if (cursor->tail>0 && minusSpace(c)) {
+            // split Hx orientation into H. and .x
+            if (!cursor->repeat && mayusSpace(cursor->buffer[cursor->tail-1])) {
+                cursor->repeat = true;
+                cursor->buffer[cursor->tail++] = '.';
+                shouldEmit = maybeOutput(cursor, pnBytes, piStartOffset, piEndOffset, piPosition);
+            } else if (cursor->repeat) {
+                cursor->repeat = false;
+                cursor->buffer[0] = '.';
+                cursor->buffer[1] = c;
+                cursor->tail = 2;
+            } else {
+                cursor->buffer[cursor->tail++] = c;
+            }
+        } else if (cursor->tail<BUFFER_SIZE) {
+            cursor->buffer[cursor->tail++] = c;
         }
 
-        cursor->index++;
-        if (wasThereToken) return SQLITE_OK;
+        if (!cursor->repeat) cursor->index++;
+        if (shouldEmit) return SQLITE_OK;
     }
-    if (emitToken(cursor, pnBytes, piStartOffset, piEndOffset, piPosition)) return SQLITE_OK;
+    if (maybeOutput(cursor, pnBytes, piStartOffset, piEndOffset, piPosition)) return SQLITE_OK;
     return SQLITE_DONE;
 }
 
