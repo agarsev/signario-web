@@ -1,11 +1,8 @@
-import { Link, Form } from "@remix-run/react";
-import { useState } from "react";
+import { Form } from "@remix-run/react";
 
 export default function Index () {
-    const [search, setSearch] = useState("");
-    const searchUrl = `/buscar?parametros=${encodeURIComponent(search)}`;
-    return <Form method="get" action={searchUrl}>
-        <input type="text" onChange={e => setSearch(e.target.value)} value={search} />
-        <Link to={searchUrl} prefetch="intent">Buscar</Link>
+    return <Form method="get" action="/buscar">
+        <input type="text" name="parametros" className="border border-blue-800" />
+        <input type="submit" value="Buscar" />
     </Form>;
 }
