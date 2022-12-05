@@ -14,7 +14,7 @@ serve:
 	env `cat .env` $(NODE_ENV) remix-serve build
 
 clean:
-	rm -rf public build
+	rm -rf public/build build
 
 build: app/tailwind.css snTokenizer.so
 	$(NODE_ENV) remix build

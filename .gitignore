@@ -1,6 +1,6 @@
 /.cache
 /node_modules
 /build
-/public
+/public/build
 /.env
 /app/tailwind.css

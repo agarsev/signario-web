@@ -10,6 +10,7 @@ import styles from "./tailwind.css";
 
 export const links = () => ([
     { rel: "stylesheet", href: styles },
+    { rel: "icon", href: "favicon.png" },
 ]);
 
 export default function App() {
@@ -18,11 +19,11 @@ export default function App() {
             <Meta />
             <Links />
         </head>
-        <body>
+        <body className="bg-gray-100 max-w-lg mx-auto">
             <header>
-                <h1 className="text-2xl p-2">
-                <Link to="/">Signario LSE</Link>
-                </h1>
+                <Link to="/">
+                    <img className="w-full" src="img/logo.svg" alt="Logo Signario LSE" />
+                </Link>
             </header>
             <main>
                 <Outlet />
