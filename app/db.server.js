@@ -6,7 +6,7 @@ const queries = {};
 export function init_db () {
     db = new Database(process.env.DB_PATH);
     db.loadExtension(process.env.SQLITE_EXT);
-    queries.searchParams = db.prepare(`SELECT signs.* FROM params
+    queries.searchSN = db.prepare(`SELECT signs.* FROM params
         JOIN signs ON docid=number
         WHERE params MATCH ?
         ORDER BY snrank(matchinfo(params, 'pxl')) DESC
@@ -21,8 +21,8 @@ function processSN (query) {
     +'"';
 }
 
-export function searchParams (query) {
-    return queries.searchParams.all(processSN(query));
+export function searchSN (query) {
+    return queries.searchSN.all(processSN(query));
 }
 
 export function getSign (number) {
