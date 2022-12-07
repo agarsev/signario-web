@@ -19,7 +19,7 @@ export default function App() {
             <Meta />
             <Links />
         </head>
-        <body className="bg-gray-100 max-w-xl mx-auto">
+        <body className="bg-stone-50 max-w-xl mx-auto">
             <header className="py-4">
                 <Link to="/">
                     <img className="w-full" src="img/logo.svg" alt="Logo Signario LSE" />

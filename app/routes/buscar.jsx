@@ -1,8 +1,8 @@
 import { json } from "@remix-run/node";
-import { useLoaderData, Link } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 
 import { searchSN } from "../db.server.js"; 
-import { Search } from '../components.jsx';
+import { Search, SignSnippet} from '../components.jsx';
 
 export async function loader ({ request }) {
     const query = new URL(request.url).searchParams.get("parametros");
@@ -12,15 +12,15 @@ export async function loader ({ request }) {
 }
 
 
-export default function Buscar () {
+export default function ResultList () {
     const data = useLoaderData();
     return <>
         <Search />
-        <ul>
-            {data.signs.map(s => <li key={s.number}>
-                <Link to={`/signo/${s.number}`} prefetch="render">
-                    {s.number} - {s.notation} - {s.gloss}
-                </Link></li>)}
+        <ul className="border-t border-stone-200 my-3">
+            {data.signs.map(s => <li key={s.number}
+                className="border-b border-stone-200 py-2 px-2">
+                <SignSnippet sign={s} />
+            </li>)}
         </ul>
     </>;
 }
