@@ -22,10 +22,10 @@ export default function App() {
         <body className="bg-stone-50 max-w-xl mx-auto">
             <header className="py-4">
                 <Link to="/">
-                    <img className="w-full" src="img/logo.svg" alt="Logo Signario LSE" />
+                    <img className="w-full" src="/img/logo.svg" alt="Logo Signario LSE" />
                 </Link>
             </header>
-            <main>
+            <main class="pb-12">
                 <Outlet />
                 <Scripts />
                 <LiveReload />
