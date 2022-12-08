@@ -25,7 +25,7 @@ export default function App() {
                     <img className="w-full" src="/img/logo.svg" alt="Logo Signario LSE" />
                 </Link>
             </header>
-            <main class="pb-12">
+            <main className="pb-12">
                 <Outlet />
                 <Scripts />
                 <LiveReload />

@@ -16,7 +16,7 @@ export default function Signo () {
     return <>
         <h2 className="text-2xl text-orange-700 my-4 py-2 border-b border-orange-700 font-bold">{s.notation}</h2>
         <h2 className="text-2xl text-stone-700 pl-2 mb-4">{s.gloss}</h2>
-        <video className="rounded" muted autoplay controls>
+        <video className="rounded" muted autoPlay controls>
           <source src={`/signo/${s.number}/video.mp4`} />
         </video>
     </>;
