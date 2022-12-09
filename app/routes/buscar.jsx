@@ -28,6 +28,7 @@ export default function ResultList () {
                 <SignSnippet sign={s} />
             </li>)}
         </ul>
+        {data.signs.length==0?<p className="text-stone-800 mt-4 text-center">No hay resultados</p>:null}
         {data.signs.length>INITIAL_RESULTS && !more ? <Link
             className="text-orange-700 block pr-2 text-right hover:underline"
             to={`?parametros=${searchParams.get("parametros")}&more=true`}>ver más

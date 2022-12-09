@@ -19,17 +19,17 @@ export default function App() {
             <Meta />
             <Links />
         </head>
-        <body className="bg-stone-50 max-w-xl mx-auto">
-            <header className="py-4">
+        <body className="max-w-xl mx-auto min-h-screen pb-12">
+            <header className="py-6">
                 <Link to="/">
                     <img className="w-full" src="/img/logo.svg" alt="Logo Signario LSE" />
                 </Link>
             </header>
-            <main className="pb-12">
+            <main className="-mx-6 px-6 py-4 rounded-xl bg-stone-50 border border-stone-200">
                 <Outlet />
-                <Scripts />
-                <LiveReload />
             </main>
+            <Scripts />
+            <LiveReload />
         </body>
     </html>;
 }

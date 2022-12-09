@@ -1,2 +1,3 @@
-module.exports = {
-};
+exports.serverDependenciesToBundle = [
+    /^marked.*/
+];
