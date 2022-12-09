@@ -10,7 +10,7 @@ export function init_db () {
         JOIN signs ON docid=number
         WHERE params MATCH ?
         ORDER BY snrank(matchinfo(params, 'pxl')) DESC
-        LIMIT 30`);
+        LIMIT ?`);
     queries.getSign = db.prepare("SELECT * FROM signs WHERE number = ?");
 }
 
@@ -21,8 +21,8 @@ function processSN (query) {
     +'"';
 }
 
-export function searchSN (query) {
-    return queries.searchSN.all(processSN(query));
+export function searchSN (query, limit) {
+    return queries.searchSN.all(processSN(query), limit);
 }
 
 export function getSign (number) {
