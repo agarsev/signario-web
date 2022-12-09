@@ -10,7 +10,7 @@ import styles from "./tailwind.css";
 
 export const links = () => ([
     { rel: "stylesheet", href: styles },
-    { rel: "icon", href: "favicon.png" },
+    { rel: "icon", href: "/favicon.png" },
 ]);
 
 export default function App() {
@@ -34,4 +34,4 @@ export default function App() {
     </html>;
 }
 
-
+export const unstable_shouldReload = () => false;
