@@ -18,6 +18,9 @@ export function init_db () {
         ORDER BY rank
         LIMIT ?`);
     queries.getSign = db.prepare("SELECT * FROM signs WHERE number = ?");
+    queries.getDefinitions = db.prepare(`SELECT content FROM attachments
+        WHERE sign = ? AND type = 'definition'
+        ORDER BY id ASC`);
 }
 
 function processSN (query) {
@@ -37,4 +40,8 @@ export function searchSpa (query, limit) {
 
 export function getSign (number) {
     return queries.getSign.get(number);
+}
+
+export function getDefinitions (number) {
+    return queries.getDefinitions.all(number);
 }

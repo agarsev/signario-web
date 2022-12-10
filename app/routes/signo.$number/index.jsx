@@ -1,7 +1,7 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 
-import { getSign } from "../../db.server.js"; 
+import { getSign, getDefinitions } from "../../db.server.js"; 
 import markdown from "../../markdown.server.js";
 
 export function meta ({ data }) {
@@ -10,10 +10,7 @@ export function meta ({ data }) {
 
 export async function loader ({ params }) {
     const sign = getSign(params.number);
-    sign.acepciones = [
-        markdown("**adj.** **dir.** Dícese de quien tiene la cualidad de ser [chiripitifláutico](/signo/12197)."),
-        markdown("**n.** Bastante espialidoso.")
-    ];
+    sign.acepciones = getDefinitions(params.number).map(d => markdown(d.content));
     return json(sign);
 }
 
@@ -28,5 +25,6 @@ export default function Signo () {
         {s.acepciones.map((a, i) => <section key={i}
             className={"prose lg:prose-xl prose-stone prose-orange my-3"+(i==0?" mt-12":"")}
             dangerouslySetInnerHTML={{__html:a}} />)}
+        <div className="mt-8" />
     </>;
 }
