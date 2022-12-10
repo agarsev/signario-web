@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node";
-import { Meta, Outlet, Scripts, Links, LiveReload, Link, useLoaderData } from "@remix-run/react";
+import { Meta, Outlet, Scripts, Links, LiveReload, Link, useLoaderData, useCatch } from "@remix-run/react";
 import { useState } from "react";
 
 export const meta = () => ({
@@ -34,14 +34,7 @@ function setCookies (obj) {
     });
 }
 
-export default function App() {
-    const userPrefs = useLoaderData();
-    const [prefs, _setPrefs] = useState(userPrefs);
-    const setPrefs = (upd) => {
-        const nup = {...prefs, ...upd};
-        setCookies(nup);
-        _setPrefs(nup);
-    };
+function Page ({ children }) {
     return <html lang="es">
         <head>
             <Meta />
@@ -54,12 +47,40 @@ export default function App() {
                 </Link>
             </header>
             <main className="-mx-6 px-6 py-4 rounded-xl bg-stone-50 border border-stone-200">
-                <Outlet context={[prefs, setPrefs]} />
+                {children}
             </main>
             <Scripts />
             <LiveReload />
         </body>
     </html>;
+}
+
+export default function App () {
+    const userPrefs = useLoaderData();
+    const [prefs, _setPrefs] = useState(userPrefs);
+    const setPrefs = (upd) => {
+        const nup = {...prefs, ...upd};
+        setCookies(nup);
+        _setPrefs(nup);
+    };
+    return <Page>
+        <Outlet context={[prefs, setPrefs]} />
+    </Page>;
+}
+
+export function CatchBoundary () {
+    const caught = useCatch();
+    return <Page>
+        <h1 className="text-2xl text-red-700 my-6 text-center font-bold">Error {caught.status}</h1>
+        <p className="prose lg:prose-xl my-6">Página no encontrada.</p>
+    </Page>;
+}
+
+export function ErrorBoundary () {
+    return <Page>
+        <h1 className="text-2xl text-red-700 my-6 text-center font-bold">Error</h1>
+        <p className="prose lg:prose-xl my-6">Error interno de servidor.</p>
+    </Page>;
 }
 
 export const unstable_shouldReload = () => false;

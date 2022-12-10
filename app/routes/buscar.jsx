@@ -9,14 +9,19 @@ const INITIAL_RESULTS = 6;
 const MAX_RESULTS = 20;
 
 export async function loader ({ request }) {
-    const query = new URL(request.url).searchParams;
-    const params = query.get("parametros");
-    const limit = query.get("more")?MAX_RESULTS:(INITIAL_RESULTS+1);
     let signs;
-    if (params) {
-        signs = searchSN(params, limit);
-    } else {
-        signs = searchSpa(query.get("traduccion"), limit);
+    try {
+        const query = new URL(request.url).searchParams;
+        const params = query.get("parametros");
+        const limit = query.get("more")?MAX_RESULTS:(INITIAL_RESULTS+1);
+        if (params) {
+            signs = searchSN(params, limit);
+        } else {
+            signs = searchSpa(query.get("traduccion"), limit);
+        }
+    } catch (e) {
+        console.error(e);
+        signs = [];
     }
     return json({ signs });
 }

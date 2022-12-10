@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { writeFile } from "node:fs/promises";
 import Database from 'better-sqlite3';
 
@@ -32,4 +32,8 @@ function createFTS () {
         SELECT number as rowid, gloss FROM signs
             WHERE gloss != '';
     `);
+}
+
+export async function loader () {
+    return redirect("/");
 }

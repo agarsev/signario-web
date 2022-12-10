@@ -5,11 +5,12 @@ import { getSign, getDefinitions } from "../../db.server.js";
 import markdown from "../../markdown.server.js";
 
 export function meta ({ data }) {
-    return { title: "Signario | "+data.gloss }
+    return { title: "Signario | "+data?.gloss }
 }
 
 export async function loader ({ params }) {
     const sign = getSign(params.number);
+    if (!sign) throw new Response("", { status: 404 });
     sign.acepciones = getDefinitions(params.number).map(d => markdown(d.content));
     return json(sign);
 }
