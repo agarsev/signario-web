@@ -1,9 +1,18 @@
 import { useState } from "react";
 
-export function Pregunton ({ SN, setSN }) {
+export function Pregunton ({ setSN }) {
     return <form className="Pregunton mt-8 mb-2">
+        <h2>Mano dominante</h2>
         <Config change={setSN} />
-        <Orient change={setSN} />
+        <Orient />
+        <Locus />
+        <h2>Mano no dominante</h2>
+        <p>La otra mano <select>
+            <option>No hace nada</option>
+            <option>Igual que la dominante</option>
+            <option>Al contrario que la dominante</option>
+            <option>Distinta que la dominante</option>
+        </select></p>
     </form>
 }
 
@@ -99,21 +108,74 @@ function Config ({ change }) {
 
 /* O */
 
-function SpaceSelect ({ val, set }) {
-    return <select value={val} onChange={e => set(e.target.value)}>
-        <option value="">No sé</option>
-        <option value="H">Arriba</option>
-        <option value="L">Abajo</option>
-    </select>;
+const absSpaces = {
+    "H": "Arriba",
+    "L": "Abajo",
+    "F": "Delante",
+    "B": "Atrás",
+    "Y": "Derecha",
+    "X": "Izquierda",
+}
+
+function Options ({ opts, prefix = "" }) {
+    return Object.keys(opts).map(key => <option key={prefix+key} value={prefix+key}>
+        {opts[key]}
+    </option>);
 }
 
 function Orient ({ change }) {
     const [palmar, setPalmar] = useState("");
     const [distal, setDistal] = useState("");
+    function OSel ({ val, set }) {
+        return <select value={val} onChange={e => set(e.target.value)} autoComplete="off">
+            <option value="">No sé</option>
+            <Options opts={absSpaces} />
+        </select>
+    };
     return <>
         <h3>¿Hacia dónde apunta la mano?</h3>
-        <span className="mr-3">La palma hacia <SpaceSelect val={palmar} set={setPalmar} /></span>
-        <span>El <HelpText text="eje distal" help="Donde apuntan los dedos si están estirados" /> hacia <SpaceSelect val={distal} set={setDistal} />
+        <span className="mr-3">La palma hacia <OSel val={palmar} set={setPalmar} /></span>
+        <span>El <HelpText text="eje distal" help="Donde apuntan los dedos si están estirados" /> hacia <OSel val={distal} set={setDistal} />
         </span>
+    </>;
+}
+
+/* L */
+
+const relSpaces = {
+    "H": "Encima de",
+    "L": "Debajo de",
+    "F": "Delante de",
+    "B": "Detrás de",
+    "Y": "A la derecha de",
+    "X": "A la izquierda de"
+};
+
+const bodySpaces = {
+    "Nar": "la nariz",
+    "Hom": "el hombro",
+    "Cue": "el cuello",
+    "H2": "la otra mano",
+};
+
+function Locus ({ change }) {
+    const [dir, setDir] = useState("");
+    const [body, setBody] = useState("");
+    const [touch, setTouch] = useState(false);
+    return <>
+        <h3>¿Dónde se encuentra la mano?</h3>
+        <select value={dir} onChange={e => setDir(e.target.value)} autoComplete="off">
+            <option value="">No sé</option>
+            <Options opts={absSpaces} />
+            <option value="n">Cerca de</option>
+            <Options opts={relSpaces} prefix="n" />
+        </select>
+        {dir[0]=="n"?<>
+            <select value={body} onChange={e => setBody(e.target.value)} autoComplete="off">
+                <Options opts={bodySpaces} />
+            </select>
+            <label><input type="checkbox" checked={touch} onChange={() => setTouch(!touch)} />
+                tocando</label>
+        </>:null}
     </>;
 }
