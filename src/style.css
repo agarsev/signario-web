@@ -8,3 +8,11 @@
         background: url('/img/bg.png');
     }
 }
+
+@layer components {
+
+    .Pregunton { @apply text-stone-700; }
+    .Pregunton h3 { @apply font-bold text-stone-800 mt-2; }
+    .Pregunton input[type=checkbox] { @apply mr-1; }
+
+}

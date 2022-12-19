@@ -76,7 +76,8 @@ export function CatchBoundary () {
     </Page>;
 }
 
-export function ErrorBoundary () {
+export function ErrorBoundary ({ error }) {
+    console.error(error);
     return <Page>
         <h1 className="text-2xl text-red-700 my-6 text-center font-bold">Error</h1>
         <p className="prose lg:prose-xl my-6">Error interno de servidor.</p>

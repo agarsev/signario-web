@@ -3,7 +3,7 @@ import { useLoaderData, useSearchParams, Link } from "@remix-run/react";
 import { useRef } from "react";
 
 import { searchSN, searchSpa } from "../db.server.js"; 
-import { Search } from '../components.jsx';
+import { Search } from '../components/search.jsx';
 
 const INITIAL_RESULTS = 6;
 const MAX_RESULTS = 20;

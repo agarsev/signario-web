@@ -1,6 +1,8 @@
 import { Form, Link, useSearchParams, useOutletContext } from "@remix-run/react";
 import { useState } from "react";
 
+import { Pregunton } from "./pregunton.jsx";
+
 const pill = "border font-bold rounded-xl py-1 px-3";
 const pillSubmit = pill+" border-violet-700 enabled:bg-violet-300 enabled:hover:bg-violet-200 enabled:cursor-pointer text-violet-800";
 const pillRadio = pill+" border-orange-700 text-orange-700 cursor-pointer border-orange-700 hover:bg-orange-300";
@@ -40,8 +42,11 @@ export function Search ({ short }) {
             <IpPill text="Español" value="traduccion" />
             <IpPill text="Visual" value="signotador" />
         </div>
-        {ipMethod=="traduccion"?<div className="prose prose-stone text-center mt-4">Buscar signos por su traducción al español.</div>:null}
+        {{
+            "traduccion": () => <div className="prose prose-stone text-center mt-4">Buscar signos por su traducción al español.</div>,
+            "pregunton": () => <Pregunton SN={query} setSN={setQuery} />,
+            "signotador": () => null
+        }[ipMethod]()}
         </>}
     </>;
 }
-
