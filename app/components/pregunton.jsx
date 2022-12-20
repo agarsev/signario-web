@@ -1,11 +1,63 @@
-import { useState } from "react";
+import { useReducer } from "react";
+
+const defFon = {
+    q: {
+        fingers: {},
+        flex: "E", touch: "", others: false,
+    },
+    o: { palmar: "", distal: "" },
+    l: { dir: "", body: "", touch: false },
+};
+
+function fonReducer (setSN) {
+    return (fon, [segment, feature, val]) => {
+        let newFon = { ...fon };
+        if (segment == "q" && feature == "fingers" && !count(val)) {
+            newFon.q = defFon.q;
+        } else {
+            newFon[segment][feature] = val;
+        }
+        setSN(fon2SN(newFon));
+        return newFon;
+    };
+}
+
+function Q2SN (Q) {
+    let sn = (Q.fingers.P?"p":"")+
+             (Q.fingers.I?"i":"")+
+             (Q.fingers.C?"c":"")+
+             (Q.fingers.A?"a":"")+
+             (Q.fingers.M?"m":"");
+    if (Q.flex == "E") sn = sn.toUpperCase();
+    else if (Q.flex != "c") sn = sn + Q.flex;
+    return `${sn}${Q.touch}${Q.others?"O":""}`;
+}
+
+function O2SN (o) {
+    return o.palmar + o.distal.toLowerCase();
+}
+
+function L2SN (l) {
+    if (l.dir[0] == "!") {
+        return l.body + l.dir.substring(1) + (l.touch?"*":"");
+    } else {
+        return l.dir;
+    }
+}
+
+function fon2SN (fon) {
+    let sn = [ Q2SN(fon.q), O2SN(fon.o), L2SN(fon.l) ];
+    sn = sn.filter(s => s.length>0);
+    return sn.join(":");
+}
 
 export function Pregunton ({ setSN }) {
+    const [fon, dispatch] = useReducer(fonReducer(setSN), defFon);
     return <form className="Pregunton mt-8 mb-2">
         <h2>Mano dominante</h2>
-        <Config change={setSN} />
-        <Orient />
-        <Locus />
+        <Config q={fon.q} dispatch={dispatch} />
+        <Orient o={fon.o} dispatch={dispatch} />
+        <Locus l={fon.l} dispatch={dispatch} />
         <h2>Mano no dominante</h2>
         <p>La otra mano <select>
             <option>No hace nada</option>
@@ -29,49 +81,22 @@ function count (obj) {
     return Object.keys(obj).filter(f => obj[f]).length;
 }
 
-const defConfig = {
-    fingers: {},
-    flex: "E", touch: "", others: false,
-};
+function Config ({ q, dispatch }) {
 
-function produceQ (Q) {
-    let sn = (Q.fingers.P?"p":"")+
-             (Q.fingers.I?"i":"")+
-             (Q.fingers.C?"c":"")+
-             (Q.fingers.A?"a":"")+
-             (Q.fingers.M?"m":"");
-    if (Q.flex == "E") sn = sn.toUpperCase();
-    else if (Q.flex != "c") sn = sn + Q.flex;
-    return `${sn}${Q.touch}${Q.others?"O":""}`;
-}
-
-function Config ({ change }) {
-
-    const [state, setState] = useState(defConfig);
-    function update (feature, val) {
-        let newState;
-        if (feature == "fingers" && !count(val)) {
-            newState = defConfig;
-        } else {
-            newState = {...state, [feature]: val};
-        }
-        setState(newState);
-        change(produceQ(newState));
-    }
-    const manyFingers = count(state.fingers);
+    const manyFingers = count(q.fingers);
 
     function Finger ({ name, val }) {
-        const unset = !state.fingers[val];
+        const unset = !q.fingers[val];
         return <label className="mr-2">
             <input type="checkbox" checked={!unset} autoComplete="off"
-                onChange={() => update("fingers", {...state.fingers,[val]:unset})} />
+                onChange={() => dispatch(["q", "fingers", {...q.fingers,[val]:unset}])} />
             {name}</label>;
     }
 
     function Question ({ condition, text, opts, feature }) {
         if (!condition) return null;
-        return <p>{text} <select value={state[feature]}
-            onChange={e=>update(feature, e.target.value)}>
+        return <p>{text} <select value={q[feature]}
+            onChange={e=>dispatch(["q", feature, e.target.value])}>
             {Object.keys(opts).map(key => <option key={key} value={key}>
                 {opts[key]}</option>)}
         </select></p>;
@@ -81,7 +106,7 @@ function Config ({ change }) {
         <h3>¿Cuáles son los dedos seleccionados?</h3>
         <label className="mr-2">
             <input type="checkbox" checked={!manyFingers}
-                onChange={() => update("fingers", {})} />
+                onChange={() => dispatch(["q", "fingers", {}])} />
             No sé</label>
         <Finger name="Pulgar" val="P" />
         <Finger name="Índice" val="I" />
@@ -100,8 +125,8 @@ function Config ({ change }) {
             "-": "Lateralmente",
             "+": "Las yemas",
         }} feature="touch" />
-        {(manyFingers>0 && manyFingers<5)?<p><label><input type="checkbox" checked={state.others}
-            onChange={() => update("others", !state.others)} />
+        {(manyFingers>0 && manyFingers<5)?<p><label><input type="checkbox" checked={q.others}
+            onChange={() => dispatch(["q", "others", !q.others])} />
             Los demás dedos están estirados</label></p>:null}
     </>;
 }
@@ -113,8 +138,8 @@ const absSpaces = {
     "L": "Abajo",
     "F": "Delante",
     "B": "Atrás",
-    "Y": "Derecha",
-    "X": "Izquierda",
+    "Y": "La derecha",
+    "X": "La izquierda",
 }
 
 function Options ({ opts, prefix = "" }) {
@@ -123,19 +148,17 @@ function Options ({ opts, prefix = "" }) {
     </option>);
 }
 
-function Orient ({ change }) {
-    const [palmar, setPalmar] = useState("");
-    const [distal, setDistal] = useState("");
-    function OSel ({ val, set }) {
-        return <select value={val} onChange={e => set(e.target.value)} autoComplete="off">
+function Orient ({ o, dispatch }) {
+    function OSel ({ dir }) {
+        return <select value={o[dir]} onChange={e => dispatch(["o", dir, e.target.value])} autoComplete="off">
             <option value="">No sé</option>
             <Options opts={absSpaces} />
         </select>
     };
     return <>
         <h3>¿Hacia dónde apunta la mano?</h3>
-        <span className="mr-3">La palma hacia <OSel val={palmar} set={setPalmar} /></span>
-        <span>El <HelpText text="eje distal" help="Donde apuntan los dedos si están estirados" /> hacia <OSel val={distal} set={setDistal} />
+        <span className="mr-3">La palma hacia <OSel dir="palmar" /></span>
+        <span>El <HelpText text="eje distal" help="Donde apuntan los dedos si están estirados" /> hacia <OSel dir="distal" />
         </span>
     </>;
 }
@@ -158,23 +181,20 @@ const bodySpaces = {
     "H2": "la otra mano",
 };
 
-function Locus ({ change }) {
-    const [dir, setDir] = useState("");
-    const [body, setBody] = useState("");
-    const [touch, setTouch] = useState(false);
+function Locus ({ l, dispatch }) {
     return <>
         <h3>¿Dónde se encuentra la mano?</h3>
-        <select value={dir} onChange={e => setDir(e.target.value)} autoComplete="off">
+        <select value={l.dir} onChange={e => dispatch(["l", "dir", e.target.value])} autoComplete="off">
             <option value="">No sé</option>
             <Options opts={absSpaces} />
-            <option value="n">Cerca de</option>
-            <Options opts={relSpaces} prefix="n" />
+            <option value="!">Cerca de</option>
+            <Options opts={relSpaces} prefix="!" />
         </select>
-        {dir[0]=="n"?<>
-            <select value={body} onChange={e => setBody(e.target.value)} autoComplete="off">
+        {l.dir[0]=="!"?<>
+            <select value={l.body} onChange={e => dispatch(["l", "body", e.target.value])} autoComplete="off">
                 <Options opts={bodySpaces} />
             </select>
-            <label><input type="checkbox" checked={touch} onChange={() => setTouch(!touch)} />
+            <label><input type="checkbox" checked={l.touch} onChange={() => dispatch(["l", "touch", !l.touch])} />
                 tocando</label>
         </>:null}
     </>;
