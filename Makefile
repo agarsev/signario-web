@@ -14,7 +14,7 @@ serve:
 	env `cat .env` $(NODE_ENV) remix-serve build
 
 clean:
-	rm -rf public/build build
+	rm -rf public build .cache app/tailwind.css
 
 build: app/tailwind.css snTokenizer.so
 	$(NODE_ENV) remix build
@@ -25,4 +25,4 @@ app/tailwind.css: src/style.css $(shell fd jsx app)
 snTokenizer.so: src/snTokenizer.c
 	$(CC) -fPIC -Wall -shared -Isqlite $(CFLAGS) $< -o $@
 
-.PHONY: watch serve build clean
+.PHONY: watch serve build clean deploy

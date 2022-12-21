@@ -9,10 +9,12 @@ export const meta = () => ({
 });
 
 import styles from "./tailwind.css";
+import logo from "./img/logo.svg";
+import favicon from "./img/favicon.png";
 
 export const links = () => ([
     { rel: "stylesheet", href: styles },
-    { rel: "icon", href: "/favicon.png" },
+    { rel: "icon", href: favicon },
 ]);
 
 const DEFAULT_PREFS = {
@@ -43,7 +45,7 @@ function Page ({ children }) {
         <body className="max-w-xl mx-auto min-h-screen pb-12">
             <header className="py-6">
                 <Link to="/">
-                    <img className="w-full" src="/img/logo.svg" alt="Logo Signario LSE" />
+                    <img className="w-full" src={logo} alt="Logo Signario LSE" />
                 </Link>
             </header>
             <main className="-mx-6 px-6 py-4 rounded-xl bg-stone-50 border border-stone-200">

@@ -1,7 +1,7 @@
 /.cache
 /node_modules
 /build
-/public/build
+/public
 /.env
 /app/tailwind.css
 /signario.db

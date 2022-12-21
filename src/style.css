@@ -5,7 +5,7 @@
 @layer base {
 
     html {
-        background: url('/img/bg.png');
+        background: url(img/bg.png);
     }
 }
 
