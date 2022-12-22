@@ -51,10 +51,17 @@ export default function ResultList () {
 
 function Snippet ({ sign }) {
     const vid = useRef(null);
+    const open = () => vid.current?.play();
+    const close = () => {vid.current?.pause();vid.current?.fastSeek(0);};
+    const touch = e => {
+        if (document.activeElement!=e.currentTarget) {
+            e.currentTarget.focus();
+            e.preventDefault();
+        }
+    };
     return <Link to={`/signario/signo/${sign.number}`} prefetch="render"
-        onMouseOver={() => vid.current?.play()}
-        onMouseOut={() => {vid.current?.pause();vid.current?.fastSeek(0);}}
-        className="block clear-both max-h-[3em] transition-all hover:max-h-[6em] overflow-hidden">
+        onMouseOver={open} onMouseOut={close} onFocus={open} onBlur={close} onTouchEnd={touch}
+        className="block clear-both max-h-[3em] transition-all hover:max-h-[6em] focus:max-h-[6em] outline-none overflow-hidden">
         <video className="w-[200px] float-right -mt-4" muted loop ref={vid}>
             <source src={`/signario/signo/${sign.number}/video.mp4`} />
         </video>

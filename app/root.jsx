@@ -9,7 +9,7 @@ export const meta = () => ({
 });
 
 import styles from "./tailwind.css";
-import logo from "./img/logo.svg";
+import logo from "./img/logo_signario.png";
 import favicon from "./img/favicon.png";
 
 export const links = () => ([
@@ -43,12 +43,12 @@ function Page ({ children }) {
             <Links />
         </head>
         <body className="max-w-xl mx-auto min-h-screen pb-12">
-            <header className="py-6">
+            <header className="p-6 text-center">
                 <Link to="/signario">
-                    <img className="w-full" src={logo} alt="Logo Signario LSE" />
+                    <img className="inline w-full max-w-[80vw]" src={logo} alt="Logo Signario LSE" />
                 </Link>
             </header>
-            <main className="-mx-6 px-6 py-4 rounded-xl bg-stone-50 border border-stone-200">
+            <main className="px-6 py-4 rounded-xl bg-stone-50 border border-stone-200">
                 {children}
             </main>
             <Scripts />
