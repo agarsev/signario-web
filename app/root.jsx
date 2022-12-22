@@ -44,7 +44,7 @@ function Page ({ children }) {
         </head>
         <body className="max-w-xl mx-auto min-h-screen pb-12">
             <header className="py-6">
-                <Link to="/">
+                <Link to="/signario">
                     <img className="w-full" src={logo} alt="Logo Signario LSE" />
                 </Link>
             </header>

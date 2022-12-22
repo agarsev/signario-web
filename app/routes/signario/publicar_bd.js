@@ -2,7 +2,7 @@ import { json, redirect } from "@remix-run/node";
 import { writeFile } from "node:fs/promises";
 import Database from 'better-sqlite3';
 
-import { init_db } from "../db.server.js";
+import { init_db } from "../../db.server.js";
 
 export async function action ({ request }) {
     const body = await request.formData();

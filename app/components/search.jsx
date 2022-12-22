@@ -28,7 +28,7 @@ export function Search ({ short }) {
     }
 
     return <>
-        <Form method="get" action="/buscar" autoComplete="off"
+        <Form method="get" action="/signario/buscar" autoComplete="off"
             className="flex py-1 mb-2" onSubmit={valid?null:e => e.preventDefault()} >
             <input type="text" name={ipMethod=="traduccion"?"traduccion":"parametros"}
                 className="border border-orange-600 rounded py-1 px-2 flex-1"

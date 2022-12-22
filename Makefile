@@ -2,7 +2,8 @@ CC:=gcc
 #CFLAGS:=-g
 CFLAGS:=-O3
 CFLAGS+= `pkg-config --cflags sqlite3`
-NODE_ENV:=NODE_ENV=development
+ENV?=development
+NODE_ENV:=NODE_ENV=$(ENV)
 
 all:
 	echo "?"
@@ -25,4 +26,4 @@ app/tailwind.css: src/style.css $(shell fd jsx app)
 snTokenizer.so: src/snTokenizer.c
 	$(CC) -fPIC -Wall -shared -Isqlite $(CFLAGS) $< -o $@
 
-.PHONY: watch serve build clean deploy
+.PHONY: watch serve build clean
