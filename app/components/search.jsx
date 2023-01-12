@@ -1,7 +1,8 @@
 import { Form, Link, useSearchParams, useOutletContext } from "@remix-run/react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import { Pregunton } from "./pregunton.jsx";
+import { Signotator } from "signotator";
 
 const pill = "border font-bold rounded-xl py-1 px-3";
 const pillSubmit = pill+" border-violet-700 enabled:bg-violet-300 enabled:hover:bg-violet-200 enabled:cursor-pointer text-violet-800";
@@ -12,6 +13,7 @@ export function Search ({ short }) {
     const [searchParams] = useSearchParams();
     const [query, setQuery] = useState(searchParams.get("parametros") || searchParams.get("traduccion") || "");
     const valid = query != "";
+    const searchBox = useRef();
 
     const [prefs, setPrefs] = useOutletContext();
     const ipMethod = prefs.input_method;
@@ -32,7 +34,7 @@ export function Search ({ short }) {
             className="flex py-1 mb-2" onSubmit={valid?null:e => e.preventDefault()} >
             <input type="text" name={ipMethod=="traduccion"?"traduccion":"parametros"}
                 className="border border-orange-600 rounded py-1 px-2 flex-1"
-                value={query} onChange={e => setQuery(e.target.value)} />
+                ref={searchBox} value={query} onChange={e => setQuery(e.target.value)} />
             <input type="submit" value="Buscar" disabled={!valid}
                 className={pillSubmit+" ml-2"} />
         </Form>
@@ -45,7 +47,7 @@ export function Search ({ short }) {
         {{
             "traduccion": () => <div className="prose prose-stone text-center mt-4">Buscar signos por su traducción al español.</div>,
             "pregunton": () => <Pregunton SN={query} setSN={setQuery} />,
-            "signotador": () => null
+            "signotador": () => <div className="text-center my-8"><Signotator inputRef={searchBox} updateVal={setQuery} /></div>,
         }[ipMethod]()}
         </>}
     </>;

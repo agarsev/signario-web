@@ -18,10 +18,10 @@ clean:
 	rm -rf public build .cache app/tailwind.css
 
 build: app/tailwind.css snTokenizer.so
-	$(NODE_ENV) remix build
+	$(NODE_ENV) npx remix build
 
-app/tailwind.css: src/style.css $(shell fd jsx app)
-	$(NODE_ENV) tailwindcss -i $< > $@
+app/tailwind.css: src/style.css tailwind.config.js postcss.config.js $(shell fd jsx app)
+	$(NODE_ENV) npx postcss $< -o $@
 
 snTokenizer.so: src/snTokenizer.c
 	$(CC) -fPIC -Wall -shared -Isqlite $(CFLAGS) $< -o $@
