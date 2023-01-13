@@ -10,12 +10,12 @@ export async function action ({ request }) {
         throw json("Not Authorized", { status: 403 });
     }
     await writeFile(process.env.DB_PATH, body.get("DATABASE").stream());
-    createFTS();
+    createExtraTables();
     init_db();
     return json("OK");
 }
 
-function createFTS () {
+function createExtraTables () {
     const db = new Database(process.env.DB_PATH);
     db.loadExtension(process.env.SQLITE_EXT);
     db.loadExtension(process.env.SNOWBALL_EXT);
@@ -31,6 +31,13 @@ function createFTS () {
     INSERT INTO spanish(rowid, gloss)
         SELECT number as rowid, gloss FROM signs
             WHERE gloss != '';
+    `);
+    // NEXT STATEMENT ONLY WORKS IF FIRST ATTACHMENT IS A DEFINITION
+    // If this is expanded, more work will be needed
+    db.exec(`CREATE VIEW IF NOT EXISTS sign_headings (number, heading)
+    AS SELECT number, COALESCE(content, gloss) FROM signs 
+        LEFT JOIN attachments ON sign=number
+        WHERE (id=0 or id is null);
     `);
 }
 

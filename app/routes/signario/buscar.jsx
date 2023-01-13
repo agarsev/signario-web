@@ -4,6 +4,7 @@ import { useRef } from "react";
 
 import { searchSN, searchSpa } from "../../db.server.js"; 
 import { Search } from '../../components/search.jsx';
+import markdown from "../../markdown.server.js";
 
 const INITIAL_RESULTS = 6;
 const MAX_RESULTS = 20;
@@ -19,6 +20,7 @@ export async function loader ({ request }) {
         } else {
             signs = searchSpa(query.get("traduccion"), limit);
         }
+        signs.forEach(s => { s.heading = markdown(s.heading); });
     } catch (e) {
         console.error(e);
         signs = [];
@@ -66,7 +68,7 @@ function Snippet ({ sign }) {
             <source src={`/signario/signo/${sign.number}/video.mp4`} />
         </video>
         <span className="font-bold text-orange-700 mb-1">{sign.notation}</span>
-        <br />
-        <span className="pl-3 text-stone-900">{sign.gloss}</span>
+        <span className="pl-3 text-stone-900"
+            dangerouslySetInnerHTML={{__html: sign.heading}} />
     </Link>;
 }

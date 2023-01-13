@@ -12,6 +12,7 @@ export async function loader ({ params }) {
     const sign = getSign(params.number);
     if (!sign) throw new Response("", { status: 404 });
     sign.acepciones = getDefinitions(params.number).map(d => markdown(d.content));
+    if (sign.acepciones.length == 0) sign.acepciones = [sign.gloss];
     return json(sign);
 }
 
@@ -19,7 +20,6 @@ export default function Signo () {
     const s = useLoaderData();
     return <>
         <h2 className="text-2xl text-orange-700 my-4 py-2 border-b border-orange-700 font-bold">{s.notation}</h2>
-        <h2 className="text-2xl text-stone-700 pl-2 mb-4">{s.gloss}</h2>
         <video className="rounded" muted autoPlay controls>
           <source src={`/signario/signo/${s.number}/video.mp4`} />
         </video>

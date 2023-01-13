@@ -7,13 +7,15 @@ export function init_db () {
     db = new Database(process.env.DB_PATH);
     db.loadExtension(process.env.SQLITE_EXT);
     db.loadExtension(process.env.SNOWBALL_EXT);
-    queries.searchSN = db.prepare(`SELECT signs.* FROM params
+    queries.searchSN = db.prepare(`SELECT signs.*, heading FROM params
         JOIN signs ON docid=number
+        JOIN sign_headings USING (number)
         WHERE params MATCH ?
         ORDER BY snrank(matchinfo(params, 'pxl')) DESC
         LIMIT ?`);
-    queries.searchSpa = db.prepare(`SELECT signs.* FROM spanish
+    queries.searchSpa = db.prepare(`SELECT signs.*, heading FROM spanish
         JOIN signs ON spanish.rowid=signs.number
+        JOIN sign_headings USING (number)
         WHERE spanish MATCH ?
         ORDER BY rank
         LIMIT ?`);
