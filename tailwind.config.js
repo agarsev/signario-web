@@ -6,8 +6,11 @@ module.exports = {
     extend: {
       colors: {
         primary: colors.orange,
-        secondary: colors.pink,
+        secondary: colors.indigo,
         current: 'currentColor',
+        signotatormain: colors.orange,
+        signotatorbtns: colors.indigo,
+        signotatorbg: "#f4f6f9",
       }
     }
   },

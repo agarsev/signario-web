@@ -4,8 +4,8 @@ import { useState, useRef } from "react";
 import { Pregunton } from "./pregunton.jsx";
 import { Signotator } from "signotator";
 
-const pill = "border font-bold rounded-xl py-1 px-3";
-const pillSubmit = pill+" border-violet-700 enabled:bg-violet-300 enabled:hover:bg-violet-200 enabled:cursor-pointer text-violet-800";
+const pill = "border font-bold rounded-xl py-1 px-3 transition-color ease-in duration-150";
+const pillSubmit = pill+" border-secondary-700 enabled:bg-secondary-200 enabled:hover:bg-secondary-100 enabled:cursor-pointer text-secondary-800";
 const pillRadio = pill+" border-orange-700 text-orange-700 cursor-pointer border-orange-700 hover:bg-orange-300";
 const pillRadioActive = pill+" border-orange-700 text-orange-700 border-orange-500 bg-orange-500 text-white";
 
