@@ -2,7 +2,7 @@ import { Form, Link, useSearchParams, useOutletContext } from "@remix-run/react"
 import { useState, useRef } from "react";
 
 import { Pregunton } from "./pregunton.jsx";
-import { Signotator } from "signotator";
+import { Signotator, SignotationInput } from "signotator";
 
 const pill = "border font-bold rounded-xl py-1 px-3 transition-color ease-in duration-150";
 const pillSubmit = pill+" border-secondary-700 enabled:bg-secondary-200 enabled:hover:bg-secondary-100 enabled:cursor-pointer text-secondary-800";
@@ -32,9 +32,12 @@ export function Search ({ short }) {
     return <>
         <Form method="get" action="/signario/buscar" autoComplete="off"
             className="flex py-1 mb-2" onSubmit={valid?null:e => e.preventDefault()} >
-            <input type="text" name={ipMethod=="traduccion"?"traduccion":"parametros"}
-                className="border border-orange-600 rounded py-1 px-2 flex-1"
-                ref={searchBox} value={query} onChange={e => setQuery(e.target.value)} />
+            <div className="flex-1 text-lg">{ipMethod=="traduccion"?
+                <input type="text" name="traduccion" ref={searchBox} value={query}
+                    className="border border-primary-600 rounded py-1 px-2 w-full outline-none"
+                    onChange={e => setQuery(e.target.value)} />:
+                <SignotationInput inputName="parametros" inputRef={searchBox} value={query} updateVal={setQuery} />
+            }</div>
             <input type="submit" value="Buscar" disabled={!valid}
                 className={pillSubmit+" ml-2"} />
         </Form>
