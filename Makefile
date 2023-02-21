@@ -3,7 +3,7 @@ CC:=gcc
 CFLAGS:=-O3
 CFLAGS+= `pkg-config --cflags sqlite3`
 ENV?=development
-NODE_ENV:=NODE_ENV=$(ENV)
+NODE_ENV=NODE_ENV=$(ENV)
 
 all:
 	echo "?"
@@ -11,12 +11,14 @@ all:
 watch:
 	fd . app src | entr make app/tailwind.css
 
+serve: ENV:=production
 serve:
-	env `cat .env` $(NODE_ENV) remix-serve build
+	env `cat .env` $(NODE_ENV) npx remix-serve build
 
 clean:
 	rm -rf public build .cache app/tailwind.css
 
+build: ENV:=production
 build: app/tailwind.css snTokenizer.so
 	$(NODE_ENV) npx remix build
 
