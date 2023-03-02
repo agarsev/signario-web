@@ -12,29 +12,12 @@ import styles from "./tailwind.css";
 import logo from "./img/logo_signario.png";
 import favicon from "./img/favicon.png";
 
+import { Search } from "./components/search.jsx";
+
 export const links = () => ([
     { rel: "stylesheet", href: styles },
     { rel: "icon", href: favicon },
 ]);
-
-const DEFAULT_PREFS = {
-    input_method: "pregunton"
-};
-
-export async function loader ({ request }) {
-    const cookies = request.headers.get("Cookie")?.split(";")?.reduce((acc, pair) => {
-            const [k, v] = pair.split("=");
-            acc[k.trim()] = v.trim();
-            return acc;
-        }, DEFAULT_PREFS) || DEFAULT_PREFS;
-    return json(cookies);
-};
-
-function setCookies (obj) {
-    Object.keys(obj).forEach(k => {
-        document.cookie = `${k}=${obj[k]}`;
-    });
-}
 
 function Page ({ children }) {
     return <html lang="es">
@@ -58,15 +41,9 @@ function Page ({ children }) {
 }
 
 export default function App () {
-    const userPrefs = useLoaderData();
-    const [prefs, _setPrefs] = useState(userPrefs);
-    const setPrefs = (upd) => {
-        const nup = {...prefs, ...upd};
-        setCookies(nup);
-        _setPrefs(nup);
-    };
     return <Page>
-        <Outlet context={[prefs, setPrefs]} />
+        <Search />
+        <Outlet />
     </Page>;
 }
 

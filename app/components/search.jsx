@@ -1,5 +1,5 @@
-import { Form, Link, useSearchParams, useOutletContext } from "@remix-run/react";
-import { useState, useRef } from "react";
+import { Form, Link, useSearchParams, useSubmit, useLocation } from "@remix-run/react";
+import { useRef } from "react";
 
 import { Pregunton } from "./pregunton.jsx";
 import { Signotator, SignotationInput } from "signotator";
@@ -10,36 +10,38 @@ const pillRadio = pill+" border-orange-700 text-orange-700 cursor-pointer border
 const pillRadioActive = pill+" border-orange-700 text-orange-700 border-orange-500 bg-orange-500 text-white";
 
 export function Search ({ short }) {
-    const [searchParams] = useSearchParams();
-    const [query, setQuery] = useState(searchParams.get("parametros") || searchParams.get("traduccion") || "");
-    const valid = query != "";
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { state } = useLocation();
+    const ipMethod = searchParams.get("buscador") || state?.buscador || "pregunton";
+    const query = searchParams.get("consulta") || state?.consulta || "";
     const searchBox = useRef();
+    const form = useRef();
+    const submit = useSubmit();
 
-    const [prefs, setPrefs] = useOutletContext();
-    const ipMethod = prefs.input_method;
-    function IpPill({ text, value }) {
+    function IpPill ({ text, value }) {
         const active = ipMethod == value;
-        const click = () => {
-            setQuery("");
-            setPrefs({input_method: value});
-        };
+        const click = () => setSearchParams({ buscador: value, consulta: "" });
         return <label className={active?pillRadioActive:pillRadio}>
-            <input className="hidden" type="radio" name="ipmethod"
+            <input className="hidden" type="radio" name="buscador"
                 value={value} onClick={click} />
         {text}</label>
     }
 
+    function setQuery (q) {
+        searchBox.current.value = q;
+        submit(form.current, {replace: true });
+    }
+
     return <>
-        <Form method="get" action="/signario/buscar" autoComplete="off"
-            className="flex py-1 mb-2" onSubmit={valid?null:e => e.preventDefault()} >
+        <Form ref={form} method="get" action="/signario?index" autoComplete="off"
+            className="flex py-1 mb-2" onSubmit={query!=""?null:e => e.preventDefault()} >
+            <input type="hidden" name="buscador" value={ipMethod} />
             <div className="flex-1 text-lg">{ipMethod=="traduccion"?
-                <input type="text" name="traduccion" ref={searchBox} value={query}
+                <input type="text" name="consulta" ref={searchBox} value={query}
                     className="border border-primary-600 rounded py-1 px-2 w-full outline-none"
                     onChange={e => setQuery(e.target.value)} />:
-                <SignotationInput inputName="parametros" inputRef={searchBox} value={query} updateVal={setQuery} />
+                <SignotationInput inputName="consulta" inputRef={searchBox} value={query} updateVal={setQuery} />
             }</div>
-            <input type="submit" value="Buscar" disabled={!valid}
-                className={pillSubmit+" ml-2"} />
         </Form>
         {short ? null : <>
         <div className="flex justify-center space-x-4" >
