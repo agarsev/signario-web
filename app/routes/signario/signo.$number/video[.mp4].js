@@ -1,4 +1,4 @@
-import { open } from 'node:fs/promises';
+import { open } from 'fs/promises';
 
 export async function loader ({ params }) {
     const f = await open(`${process.env.VID_PATH}/${params.number.substring(0,3)}/${params.number.substring(3)}.mp4`);

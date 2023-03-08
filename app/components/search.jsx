@@ -2,7 +2,7 @@ import { Form, Link, useSearchParams, useSubmit, useLocation } from "@remix-run/
 import { useRef } from "react";
 
 import { Pregunton } from "./pregunton.jsx";
-import { Signotator, SignotationInput } from "signotator";
+import { Signotator, SignotationInput } from "../../src/signotator.js";
 
 const pill = "border font-bold rounded-xl py-1 px-3 transition-color ease-in duration-150";
 const pillSubmit = pill+" border-secondary-700 enabled:bg-secondary-200 enabled:hover:bg-secondary-100 enabled:cursor-pointer text-secondary-800";

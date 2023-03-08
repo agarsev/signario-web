@@ -1,5 +1,5 @@
 import { json, redirect } from "@remix-run/node";
-import { writeFile } from "node:fs/promises";
+import { writeFile } from "fs/promises";
 import Database from 'better-sqlite3';
 
 import { init_db } from "../../db.server.js";
