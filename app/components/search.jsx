@@ -32,7 +32,7 @@ export function Search () {
         submit(form.current, {replace: true });
     }
 
-    return <>
+    return <div>
         <Form ref={form} method="get" action="/signario?index" autoComplete="off"
             className="flex py-1 mb-2" onSubmit={query!=""?null:e => e.preventDefault()} >
             <input type="hidden" name="buscador" value={ipMethod} />
@@ -53,5 +53,5 @@ export function Search () {
             "pregunton": () => <Pregunton SN={query} setSN={setQuery} />,
             "signotador": () => <div className="text-center my-8"><Signotator inputRef={searchBox} updateVal={setQuery} /></div>,
         }[ipMethod]()}
-    </>;
+    </div>;
 }

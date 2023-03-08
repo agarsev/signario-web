@@ -40,18 +40,20 @@ export default function ResultList () {
     const more = searchParams.has("more");
     const signs = more?data.signs:data.signs.slice(0, INITIAL_RESULTS);
     const searchMode = searchParams.has("traduccion")?"traduccion":"parametros";
-    return <>
-        <ul className="border-t border-stone-200 my-3">
+    return searchParams.get("consulta")?.length>0?<div>
+        {signs.length==0?
+            <p>No hay resultados</p>:
+            <ul className="border-t border-stone-200 my-3">
             {signs.map(s => <li key={s.number}
                 className="border-b border-stone-200 py-2 px-2">
                 <Snippet sign={s} />
             </li>)}
-        </ul>
+        </ul>}
         {data.signs.length>INITIAL_RESULTS && !more ? <a
             onClick={() => setSearchParams(p => { p.set('more', true); return p; })}
             className="text-orange-700 block pr-2 text-right cursor-pointer hover:underline"
             >ver más</a> : null}
-    </>;
+    </div>:null;
 }
 
 function Snippet ({ sign }) {

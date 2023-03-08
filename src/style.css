@@ -8,6 +8,25 @@
     html {
         background: url(img/bg.png);
     }
+    @media (max-width: 48rem) {
+        body {
+            min-height: calc(100vh + 200px);
+        }
+        main {
+            min-width: 360px;
+            max-width: 32rem;
+            @apply mx-auto;
+        }
+    }
+    @media (min-width: 48rem) {
+        main { @apply inline-flex flex-row flex-nowrap; }
+        main > div { width: 46vw; }
+        main > div + div { @apply ml-[2vw]; }
+    }
+    @media (min-width: 64rem) {
+        main > div { width: 32rem; }
+        main > div + div { @apply ml-6; }
+    }
 }
 
 @layer components {

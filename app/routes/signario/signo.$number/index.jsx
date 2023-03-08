@@ -23,7 +23,7 @@ export default function Signo () {
     useEffect(() => {
         bottom.current?.scrollIntoView({ behavior: 'smooth' });
     }, []);
-    return <>
+    return <div>
         <h2 className="text-2xl text-orange-700 my-4 py-2 border-b border-orange-700 font-bold">{s.notation}</h2>
         <video className="rounded" muted autoPlay controls>
           <source src={`/signario/signo/${s.number}/video.mp4`} />
@@ -32,5 +32,5 @@ export default function Signo () {
             className={"prose lg:prose-xl prose-stone prose-orange my-3"+(i==0?" mt-12":"")}
             dangerouslySetInnerHTML={{__html:a}} />)}
         <div ref={bottom} className="mt-8" />
-    </>;
+    </div>;
 }
