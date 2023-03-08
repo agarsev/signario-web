@@ -9,7 +9,7 @@ const pillSubmit = pill+" border-secondary-700 enabled:bg-secondary-200 enabled:
 const pillRadio = pill+" border-orange-700 text-orange-700 cursor-pointer border-orange-700 hover:bg-orange-300";
 const pillRadioActive = pill+" border-orange-700 text-orange-700 border-orange-500 bg-orange-500 text-white";
 
-export function Search ({ short }) {
+export function Search () {
     const [searchParams, setSearchParams] = useSearchParams();
     const { state } = useLocation();
     const ipMethod = searchParams.get("buscador") || state?.buscador || "pregunton";
@@ -43,7 +43,6 @@ export function Search ({ short }) {
                 <SignotationInput inputName="consulta" inputRef={searchBox} value={query} updateVal={setQuery} />
             }</div>
         </Form>
-        {short ? null : <>
         <div className="flex justify-center space-x-4" >
             <IpPill text="Parámetros" value="pregunton" />
             <IpPill text="Español" value="traduccion" />
@@ -54,6 +53,5 @@ export function Search ({ short }) {
             "pregunton": () => <Pregunton SN={query} setSN={setQuery} />,
             "signotador": () => <div className="text-center my-8"><Signotator inputRef={searchBox} updateVal={setQuery} /></div>,
         }[ipMethod]()}
-        </>}
     </>;
 }

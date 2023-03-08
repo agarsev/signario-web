@@ -1,5 +1,6 @@
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { useRef, useEffect } from "react";
 
 import { getSign, getDefinitions } from "../../../db.server.js"; 
 import markdown from "../../../markdown.server.js";
@@ -18,6 +19,10 @@ export async function loader ({ params }) {
 
 export default function Signo () {
     const s = useLoaderData();
+    const bottom = useRef();
+    useEffect(() => {
+        bottom.current?.scrollIntoView({ behavior: 'smooth' });
+    }, []);
     return <>
         <h2 className="text-2xl text-orange-700 my-4 py-2 border-b border-orange-700 font-bold">{s.notation}</h2>
         <video className="rounded" muted autoPlay controls>
@@ -26,6 +31,6 @@ export default function Signo () {
         {s.acepciones.map((a, i) => <section key={i}
             className={"prose lg:prose-xl prose-stone prose-orange my-3"+(i==0?" mt-12":"")}
             dangerouslySetInnerHTML={{__html:a}} />)}
-        <div className="mt-8" />
+        <div ref={bottom} className="mt-8" />
     </>;
 }

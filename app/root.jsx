@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node";
 import { Meta, Outlet, Scripts, Links, LiveReload, Link, useLoaderData, useCatch } from "@remix-run/react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export const meta = () => ({
     charset: "utf-8",
@@ -20,18 +20,27 @@ export const links = () => ([
 ]);
 
 function Page ({ children }) {
+    const isInitialMount = useRef(true);
+    const main = useRef();
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+        } else {
+            main.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
     return <html lang="es">
         <head>
             <Meta />
             <Links />
         </head>
-        <body className="max-w-xl mx-auto min-h-screen pb-12">
+        <body className="max-w-xl mx-auto min-h-screen pb-12" style={{minHeight: "calc(100vh + 200px)"}}>
             <header className="p-6 text-center">
                 <Link to="/signario">
-                    <img className="inline w-full max-w-[80vw]" src={logo} alt="Logo Signario LSE" />
+                    <img className="inline max-w-full max-h-[200px]" src={logo} alt="Logo Signario LSE" />
                 </Link>
             </header>
-            <main className="px-6 py-4 rounded-xl bg-stone-50 border border-stone-200">
+            <main ref={main} className="px-6 py-4 rounded-xl bg-stone-50 border border-stone-200">
                 {children}
             </main>
             <Scripts />
