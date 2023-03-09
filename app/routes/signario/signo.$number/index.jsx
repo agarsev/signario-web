@@ -23,13 +23,13 @@ export default function Signo () {
     useEffect(() => {
         bottom.current?.scrollIntoView({ behavior: 'smooth' });
     }, []);
-    return <div>
-        <h2 className="text-2xl text-orange-700 my-4 py-2 border-b border-orange-700 font-bold">{s.notation}</h2>
-        <video className="rounded" muted autoPlay controls>
+    return <div className="bg-stone-50">
+        <h2 className="text-2xl text-center text-orange-700 my-4 py-2 border-b border-orange-700 font-bold">{s.notation}</h2>
+        <video className="rounded w-full aspect-[4/3]" muted autoPlay controls>
           <source src={`/signario/signo/${s.number}/video.mp4`} />
         </video>
         {s.acepciones.map((a, i) => <section key={i}
-            className={"prose lg:prose-xl prose-stone prose-orange my-3"+(i==0?" mt-12":"")}
+            className={"prose lg:prose-xl prose-stone prose-orange my-2"+(i==0?" mt-12":"")}
             dangerouslySetInnerHTML={{__html:a}} />)}
         <div ref={bottom} className="mt-8" />
     </div>;
