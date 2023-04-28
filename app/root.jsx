@@ -37,7 +37,7 @@ function Page ({ children }) {
             <Links />
         </head>
         <body className="flex flex-col items-center min-h-[100vh]">
-            <header className="p-6 text-center">
+            <header className="p-6 text-center xl:my-6">
                 <Link to="/signario">
                     <img className="inline max-w-full max-h-[200px]" src={logo} alt="Logo Signario LSE" />
                 </Link>
@@ -45,7 +45,7 @@ function Page ({ children }) {
             <main ref={main} className="px-6 py-4 rounded-xl bg-stone-50 border border-stone-200 mb-16">
                 {children}
             </main>
-            <footer className="rounded-xl bg-stone-50 border-x border-t border-stone-200 mt-auto p-3 pb-1 text-center grid grid-cols-2 place-items-center gap-x-2 gap-y-1 lg:gap-y-0 lg:grid-cols-[auto,1fr,auto]">
+            <footer className="rounded-t-xl bg-stone-50 border-x border-t border-stone-200 mt-auto p-3 pb-1 text-center grid grid-cols-2 place-items-center gap-x-2 gap-y-1 lg:gap-y-0 lg:grid-cols-[auto,1fr,auto]">
                 <p className="text-sm text-stone-800 col-span-2 order-2 lg:col-span-1">
                     © José María Lahoz-Bengoechea &amp; Antonio F. G. Sevilla <br />
                     <a className="hover:underline text-primary-600 ml-2" href="https://www.ucm.es/signariolse" target="_blank">Saber más del proyecto Signario de LSE</a>
