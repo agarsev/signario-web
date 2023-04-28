@@ -47,8 +47,8 @@ function Page ({ children }) {
             </main>
             <footer className="rounded-xl bg-stone-50 border-x border-t border-stone-200 mt-auto p-3 pb-1 text-center grid grid-cols-2 place-items-center gap-x-2 gap-y-1 lg:gap-y-0 lg:grid-cols-[auto,1fr,auto]">
                 <p className="text-sm text-stone-800 col-span-2 order-2 lg:col-span-1">
-                    © José María Lahoz-Bengoechea &amp; Antonio F. G. Sevilla
-                    <a className="hover:underline text-primary-600 ml-2" href="https://www.ucm.es/signario" target="_blank">→ Saber más</a>
+                    © José María Lahoz-Bengoechea &amp; Antonio F. G. Sevilla <br />
+                    <a className="hover:underline text-primary-600 ml-2" href="https://www.ucm.es/signariolse" target="_blank">Saber más del proyecto Signario de LSE</a>
                 </p>
                 <a className="inline-block max-w-[200px] order-2 lg:order-1 lg:row-span-3" href="https://www.fbbva.es/" target="_blank">
                     <img src={logo_bbva} alt="Fundación BBVA" />
