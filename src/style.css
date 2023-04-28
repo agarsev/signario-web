@@ -12,14 +12,14 @@
         body {
             min-height: calc(100vh + 200px);
         }
-        main {
+        main, footer {
             min-width: 360px;
             max-width: 32rem;
-            @apply mx-auto;
         }
     }
     @media (min-width: 48rem) {
         main { @apply inline-flex flex-row flex-nowrap; }
+        footer { max-width: 70rem; }
         main > div { width: 46vw; }
         main > div + div { @apply ml-[2vw]; }
     }
