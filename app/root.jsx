@@ -22,15 +22,7 @@ export const links = () => ([
 ]);
 
 function Page ({ children }) {
-    const isInitialMount = useRef(true);
     const main = useRef();
-    useEffect(() => {
-        if (isInitialMount.current) {
-            isInitialMount.current = false;
-        } else {
-            main.current?.scrollIntoView({ behavior: 'smooth' });
-        }
-    });
     return <html lang="es">
         <head>
             <Meta />

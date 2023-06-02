@@ -1,5 +1,7 @@
-import { useReducer } from "react";
+import { useState } from "react";
+import { PreguntonQ } from "./pregunton/Q";
 
+/*
 const defFon = {
     q: {
         fingers: {},
@@ -13,24 +15,16 @@ function fonReducer (setSN) {
     return (fon, [segment, feature, val]) => {
         let newFon = { ...fon };
         if (segment == "q" && feature == "fingers" && !count(val)) {
-            newFon.q = defFon.q;
+            newFon.q = { ...defFon.q };
         } else {
-            newFon[segment][feature] = val;
+            newFon[segment] = {
+                ...newFon[segment],
+                [feature]: val
+            };
         }
         setSN(fon2SN(newFon));
         return newFon;
     };
-}
-
-function Q2SN (Q) {
-    let sn = (Q.fingers.P?"p":"")+
-             (Q.fingers.I?"i":"")+
-             (Q.fingers.C?"c":"")+
-             (Q.fingers.A?"a":"")+
-             (Q.fingers.M?"m":"");
-    if (Q.flex == "E") sn = sn.toUpperCase();
-    else if (Q.flex != "c") sn = sn + Q.flex;
-    return `${sn}${Q.touch}${Q.others?"O":""}`;
 }
 
 function O2SN (o) {
@@ -46,27 +40,35 @@ function L2SN (l) {
 }
 
 function fon2SN (fon) {
-    let sn = [ Q2SN(fon.q), O2SN(fon.o), L2SN(fon.l) ];
+    let sn = [ fon.q.signotation(), O2SN(fon.o), L2SN(fon.l) ];
     sn = sn.filter(s => s.length>0);
     return sn.join(":");
 }
+*/
 
 export function Pregunton ({ setSN }) {
-    const [fon, dispatch] = useReducer(fonReducer(setSN), defFon);
+    const [detailed, setDets] = useState(false);
     return <form className="Pregunton mt-8 mb-2">
-        <h2>Mano dominante</h2>
-        <Config q={fon.q} dispatch={dispatch} />
-        <Orient o={fon.o} dispatch={dispatch} />
-        <Locus l={fon.l} dispatch={dispatch} />
-        <h2>Mano no dominante</h2>
-        <p>La otra mano <select>
-            <option>No hace nada</option>
-            <option>Igual que la dominante</option>
-            <option>Al contrario que la dominante</option>
-            <option>Distinta que la dominante</option>
-        </select></p>
+        <h2>Q (configuración)</h2>
+        <PreguntonQ setSN={setSN} detailed={detailed} />
+        <p className="text-right italic text-stone-600 mt-3">
+            <label>Avanzado
+            <input className="ml-2" type="checkbox"
+                checked={detailed} onChange={() => setDets(!detailed)} />
+        </label></p>
     </form>
 }
+/*
+<Orient o={fon.o} dispatch={dispatch} />
+<Locus l={fon.l} dispatch={dispatch} />
+<h2>Mano no dominante</h2>
+<p>La otra mano <select>
+    <option>No hace nada</option>
+    <option>Igual que la dominante</option>
+    <option>Al contrario que la dominante</option>
+    <option>Distinta que la dominante</option>
+</select></p>
+*/
 
 function HelpText ({ text, help }) {
     return <span title={help}>
@@ -75,61 +77,6 @@ function HelpText ({ text, help }) {
     </span>
 }
 
-/* Q */
-
-function count (obj) {
-    return Object.keys(obj).filter(f => obj[f]).length;
-}
-
-function Config ({ q, dispatch }) {
-
-    const manyFingers = count(q.fingers);
-
-    function Finger ({ name, val }) {
-        const unset = !q.fingers[val];
-        return <label className="mr-2">
-            <input type="checkbox" checked={!unset} autoComplete="off"
-                onChange={() => dispatch(["q", "fingers", {...q.fingers,[val]:unset}])} />
-            {name}</label>;
-    }
-
-    function Question ({ condition, text, opts, feature }) {
-        if (!condition) return null;
-        return <p>{text} <select value={q[feature]}
-            onChange={e=>dispatch(["q", feature, e.target.value])}>
-            {Object.keys(opts).map(key => <option key={key} value={key}>
-                {opts[key]}</option>)}
-        </select></p>;
-    }
-
-    return <>
-        <h3>¿Cuáles son los dedos seleccionados?</h3>
-        <label className="mr-2">
-            <input type="checkbox" checked={!manyFingers}
-                onChange={() => dispatch(["q", "fingers", {}])} />
-            No sé</label>
-        <Finger name="Pulgar" val="P" />
-        <Finger name="Índice" val="I" />
-        <Finger name="Corazón" val="C" />
-        <Finger name="Anular" val="A" />
-        <Finger name="Meñique" val="M" />
-        <Question condition={manyFingers>0} text="Están:" opts={{
-            "E": 'Estirados',
-            "#": 'Cerrados (puño)',
-            "c": 'Curvados',
-            "r": 'Doblados por el nudillo, planos',
-            "g": 'Doblados "como una garra"',
-        }} feature="flex" />
-        <Question condition={manyFingers>1} text="Se tocan:" opts={{
-            "": "No",
-            "-": "Lateralmente",
-            "+": "Las yemas",
-        }} feature="touch" />
-        {(manyFingers>0 && manyFingers<5)?<p><label><input type="checkbox" checked={q.others}
-            onChange={() => dispatch(["q", "others", !q.others])} />
-            Los demás dedos están estirados</label></p>:null}
-    </>;
-}
 
 /* O */
 
