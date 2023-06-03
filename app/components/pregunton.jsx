@@ -1,71 +1,57 @@
 import { useState } from "react";
 import { PreguntonQ } from "./pregunton/Q";
 import { PreguntonO } from "./pregunton/O";
+import { PreguntonL } from "./pregunton/L";
 
-/*
-const defFon = {
-    l: { dir: "", body: "", touch: false },
-};
-
-function L2SN (l) {
-    if (l.dir[0] == "!") {
-        return l.body + l.dir.substring(1) + (l.touch?"*":"");
-    } else {
-        return l.dir;
-    }
+const DEFAULT_SN = {
+    prefix: "",
+    q: "",
+    o: "",
+    l: "",
 }
 
-*/
+function reducer (SN, action) {
+    switch (action.action) {
+        case "segment":
+            return { ...SN, [action.segment]: action.value };
+        case "lugar":
+            const [prefix, l] = action.value;
+            return { ...SN, prefix, l };
+    }
+    console.error("UNKNOWN ACTION", action, SN);
+}
 
 export function Pregunton ({ setSN }) {
     const [detailed, setDets] = useState(false);
-    const [qSN, _setQSN] = useState("");
-    const [oSN, _setOSN] = useState("");
-    const setFullSN = (qSN, oSN) => {
-        setSN([qSN,oSN].filter(v => !!v).join(":"));
+
+    const [SN, _setSN] = useState(DEFAULT_SN);
+    const dispatch = action => {
+        const nSN = reducer(SN, action);
+        _setSN(nSN);
+        setSN(signotation(nSN));
     }
-    const setQSN = qSN => { _setQSN(qSN); setFullSN(qSN, oSN); };
-    const setOSN = oSN => { _setOSN(oSN); setFullSN(qSN, oSN); };
+
     return <form className="Pregunton mt-8 mb-2">
+
         <h2>Q (configuración)</h2>
-        <PreguntonQ setSN={setQSN} detailed={detailed} />
+        <PreguntonQ detailed={detailed}
+            setSN={value => dispatch({ action: "segment", segment: "q", value })} />
         {detailed?<>
             <h2>O (orientación)</h2>
-            <PreguntonO setSN={setOSN} />
+            <PreguntonO setSN={value => dispatch({ action: "segment", segment: "o", value })} />
         </>:null}
+        <h2>L (lugar)</h2>
+        <PreguntonL detailed={detailed}
+            setSN={value => dispatch({ action: "lugar", value })} />
+
         <p className="text-right italic text-stone-600 mt-3">
             <label>Avanzado
             <input className="ml-2" type="checkbox"
                 checked={detailed} onChange={() => setDets(!detailed)} />
         </label></p>
-    </form>
+    </form>;
 }
-/*
-<Locus l={fon.l} dispatch={dispatch} />
-<h2>Mano no dominante</h2>
-<p>La otra mano <select>
-    <option>No hace nada</option>
-    <option>Igual que la dominante</option>
-    <option>Al contrario que la dominante</option>
-    <option>Distinta que la dominante</option>
-</select></p>
-*/
 
-function Locus ({ l, dispatch }) {
-    return <>
-        <h3>¿Dónde se encuentra la mano?</h3>
-        <select value={l.dir} onChange={e => dispatch(["l", "dir", e.target.value])} autoComplete="off">
-            <option value="">No sé</option>
-            <Options opts={absSpaces} />
-            <option value="!">Cerca de</option>
-            <Options opts={relSpaces} prefix="!" />
-        </select>
-        {l.dir[0]=="!"?<>
-            <select value={l.body} onChange={e => dispatch(["l", "body", e.target.value])} autoComplete="off">
-                <Options opts={bodySpaces} />
-            </select>
-            <label><input type="checkbox" checked={l.touch} onChange={() => dispatch(["l", "touch", !l.touch])} />
-                tocando</label>
-        </>:null}
-    </>;
+function signotation (SN) {
+    return [SN.prefix+SN.q, SN.o, SN.l].filter(x => !!x).join(":");
 }

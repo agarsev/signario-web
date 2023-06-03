@@ -40,8 +40,8 @@ function reducer (q, action) {
 export function PreguntonQ ({ detailed, setSN }) {
 
     const [q, setQ] = useState(DEFAULT_Q);
-    const dispatch = (action, payload) => {
-        const nq = reducer(q, action, payload);
+    const dispatch = action => {
+        const nq = reducer(q, action);
         setQ(nq);
         setSN(signotation(nq));
     }
