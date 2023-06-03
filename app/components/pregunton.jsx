@@ -1,35 +1,11 @@
 import { useState } from "react";
 import { PreguntonQ } from "./pregunton/Q";
+import { PreguntonO } from "./pregunton/O";
 
 /*
 const defFon = {
-    q: {
-        fingers: {},
-        flex: "E", touch: "", others: false,
-    },
-    o: { palmar: "", distal: "" },
     l: { dir: "", body: "", touch: false },
 };
-
-function fonReducer (setSN) {
-    return (fon, [segment, feature, val]) => {
-        let newFon = { ...fon };
-        if (segment == "q" && feature == "fingers" && !count(val)) {
-            newFon.q = { ...defFon.q };
-        } else {
-            newFon[segment] = {
-                ...newFon[segment],
-                [feature]: val
-            };
-        }
-        setSN(fon2SN(newFon));
-        return newFon;
-    };
-}
-
-function O2SN (o) {
-    return o.palmar + o.distal.toLowerCase();
-}
 
 function L2SN (l) {
     if (l.dir[0] == "!") {
@@ -39,18 +15,24 @@ function L2SN (l) {
     }
 }
 
-function fon2SN (fon) {
-    let sn = [ fon.q.signotation(), O2SN(fon.o), L2SN(fon.l) ];
-    sn = sn.filter(s => s.length>0);
-    return sn.join(":");
-}
 */
 
 export function Pregunton ({ setSN }) {
     const [detailed, setDets] = useState(false);
+    const [qSN, _setQSN] = useState("");
+    const [oSN, _setOSN] = useState("");
+    const setFullSN = (qSN, oSN) => {
+        setSN([qSN,oSN].filter(v => !!v).join(":"));
+    }
+    const setQSN = qSN => { _setQSN(qSN); setFullSN(qSN, oSN); };
+    const setOSN = oSN => { _setOSN(oSN); setFullSN(qSN, oSN); };
     return <form className="Pregunton mt-8 mb-2">
         <h2>Q (configuración)</h2>
-        <PreguntonQ setSN={setSN} detailed={detailed} />
+        <PreguntonQ setSN={setQSN} detailed={detailed} />
+        {detailed?<>
+            <h2>O (orientación)</h2>
+            <PreguntonO setSN={setOSN} />
+        </>:null}
         <p className="text-right italic text-stone-600 mt-3">
             <label>Avanzado
             <input className="ml-2" type="checkbox"
@@ -59,7 +41,6 @@ export function Pregunton ({ setSN }) {
     </form>
 }
 /*
-<Orient o={fon.o} dispatch={dispatch} />
 <Locus l={fon.l} dispatch={dispatch} />
 <h2>Mano no dominante</h2>
 <p>La otra mano <select>
@@ -69,64 +50,6 @@ export function Pregunton ({ setSN }) {
     <option>Distinta que la dominante</option>
 </select></p>
 */
-
-function HelpText ({ text, help }) {
-    return <span title={help}>
-        <span className="underline decoration-dotted">{text}</span>
-        <sup>?</sup>
-    </span>
-}
-
-
-/* O */
-
-const absSpaces = {
-    "H": "Arriba",
-    "L": "Abajo",
-    "F": "Delante",
-    "B": "Atrás",
-    "Y": "La derecha",
-    "X": "La izquierda",
-}
-
-function Options ({ opts, prefix = "" }) {
-    return Object.keys(opts).map(key => <option key={prefix+key} value={prefix+key}>
-        {opts[key]}
-    </option>);
-}
-
-function Orient ({ o, dispatch }) {
-    function OSel ({ dir }) {
-        return <select value={o[dir]} onChange={e => dispatch(["o", dir, e.target.value])} autoComplete="off">
-            <option value="">No sé</option>
-            <Options opts={absSpaces} />
-        </select>
-    };
-    return <>
-        <h3>¿Hacia dónde apunta la mano?</h3>
-        <span className="mr-3">La palma hacia <OSel dir="palmar" /></span>
-        <span>El <HelpText text="eje distal" help="Donde apuntan los dedos si están estirados" /> hacia <OSel dir="distal" />
-        </span>
-    </>;
-}
-
-/* L */
-
-const relSpaces = {
-    "H": "Encima de",
-    "L": "Debajo de",
-    "F": "Delante de",
-    "B": "Detrás de",
-    "Y": "A la derecha de",
-    "X": "A la izquierda de"
-};
-
-const bodySpaces = {
-    "Nar": "la nariz",
-    "Hom": "el hombro",
-    "Cue": "el cuello",
-    "H2": "la otra mano",
-};
 
 function Locus ({ l, dispatch }) {
     return <>
