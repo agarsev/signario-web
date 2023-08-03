@@ -18,11 +18,11 @@ export async function loader ({ request }) {
         if (query?.length > 0) {
             const limit = params.get("more")?MAX_RESULTS:(INITIAL_RESULTS+1);
             if (method == "traduccion") {
-                signs = searchSpa(query, limit);
+                signs = await searchSpa(query, limit);
             } else {
-                signs = searchSN(query, limit);
+                signs = await searchSN(query, limit);
             }
-            signs.forEach(s => { s.heading = markdown(s.heading); });
+            signs.forEach(s => { s.heading = markdown(s.definitions[0]?.content || s.gloss); });
         } else {
             signs = [];
         }

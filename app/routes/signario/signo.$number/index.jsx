@@ -15,7 +15,7 @@ export async function loader ({ params }) {
     if (sign.acepciones.length == 0) {
         sign.acepciones = [sign.gloss];
     } else {
-        sign.acepciones = sign.acepciones.map(d => markdown(d.content));
+        sign.acepciones = sign.definitions.map(d => markdown(d.content));
     }
     return json(sign);
 }
