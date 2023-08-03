@@ -5,43 +5,54 @@ export const elasticsearch = new Client({
     node: 'http://127.0.0.1:9200',
 })
 
-/*
-export function init_db () {
-    db = new Database(process.env.DB_PATH);
-    db.loadExtension(process.env.SQLITE_EXT);
-    db.loadExtension(process.env.SNOWBALL_EXT);
-    queries.searchSN = db.prepare(`SELECT signs.*, heading FROM params
-        JOIN signs ON docid=number
-        JOIN sign_headings USING (number)
-        WHERE params MATCH ?
-        ORDER BY snrank(matchinfo(params, 'pxl')) DESC
-        LIMIT ?`);
-}
-
-function processSN (query) {
-    return '"' + query
-      .replaceAll('*', 't')
-      .replaceAll(':', '" "')
-    +'"';
-}
-*/
-
 // Load a new sqlite database of signs into elasticsearch
 export async function index_db () {
     const db = new Database(process.env.DB_PATH);
     if (await elasticsearch.indices.exists({ index: 'signs' })) {
         await elasticsearch.indices.delete({ index: 'signs' });
     }
-    await elasticsearch.indices.create({ index: 'signs', mappings: {
-        properties: {
-            gloss: { type: 'text', analyzer: 'spanish', copy_to: 'oral' },
-            definitions: { type: 'nested', properties: {
-                content: { type: 'text', analyzer: 'spanish', copy_to: 'oral' }
-            }},
-            // search by oral language gloss or definitions
-            oral: { type: 'text', analyzer: 'spanish' }
+    await elasticsearch.indices.create({
+        index: 'signs',
+        settings: {
+            max_ngram_diff: 2,
+            analysis: {
+                analyzer: {
+                    signotation: {
+                        type: 'custom',
+                        char_filter: ['sn_charfilter'],
+                        tokenizer: 'sn_tokenizer',
+                        filter: []
+                    }
+                },
+                char_filter: {
+                    sn_charfilter: {
+                        type: "mapping",
+                        mappings: [": =>"]
+                    }
+                },
+                tokenizer: {
+                    sn_tokenizer: {
+                        type: "ngram",
+                        min_gram: 1,
+                        max_gram: 3,
+                        token_chars: ['letter','digit','punctuation','symbol']
+                    }
+                }
+            }
+        },
+        mappings: {
+            dynamic: false,
+            properties: {
+                notation: { type: 'text', analyzer: 'signotation' },
+                gloss: { type: 'text', analyzer: 'spanish', copy_to: 'oral' },
+                definitions: { type: 'nested', properties: {
+                    content: { type: 'text', analyzer: 'spanish', copy_to: 'oral' }
+                }},
+                // search by oral language gloss or definitions
+                oral: { type: 'text', analyzer: 'spanish' }
+            }
         }
-    }});
+    });
     const signs = db.prepare(`SELECT * FROM signs`);
     const definitions = db.prepare(`SELECT content FROM attachments
         WHERE sign = ? AND type = 'definition'
@@ -54,10 +65,15 @@ export async function index_db () {
             document: s
         });
     }
+    db.close();
 }
 
 export async function searchSN (query, limit) {
-    return [];
+    const res = await elasticsearch.search({
+        query: { match: { notation: { query, fuzziness: "1" }}},
+        size: limit,
+    });
+    return res.hits.hits.map(doc => doc._source);
 }
 
 export async function searchSpa (query, limit) {
