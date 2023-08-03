@@ -12,7 +12,7 @@ export function meta ({ data }) {
 export async function loader ({ params }) {
     const sign = await getSign(params.number);
     if (!sign) throw new Response("", { status: 404 });
-    if (sign.acepciones.length == 0) {
+    if (sign.definitions.length == 0) {
         sign.acepciones = [sign.gloss];
     } else {
         sign.acepciones = sign.definitions.map(d => markdown(d.content));

@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 
 import { Client } from '@elastic/elasticsearch';
 export const elasticsearch = new Client({
-    node: 'http://127.0.0.1:9200',
+    node: process.env.ELASTICSEARCH_URL,
 })
 
 // Load a new sqlite database of signs into elasticsearch

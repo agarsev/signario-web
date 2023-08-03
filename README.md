@@ -21,12 +21,7 @@ Hecho con / made with:
 
 - [Remix](https://remix.run/)
 - [Tailwind](https://tailwindcss.com/)
-- [SQLite](https://www.sqlite.org)
-- [FTS5 snowball](https://github.com/abiliojr/fts5-snowball).
-
-Incluye un tokenizador propio para Signotación de Lengua de Signos Española.
-
-Includes a custom tokenizer for Spanish Sign Language Signotation.
+- [ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/8.9/index.html)
 
 ## Créditos
 
