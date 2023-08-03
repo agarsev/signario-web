@@ -1,8 +1,11 @@
 import Database from 'better-sqlite3';
 
-let db;
-const queries = {};
+import { Client } from '@elastic/elasticsearch';
+export const elasticsearch = new Client({
+    node: 'http://127.0.0.1:9200',
+})
 
+/*
 export function init_db () {
     db = new Database(process.env.DB_PATH);
     db.loadExtension(process.env.SQLITE_EXT);
@@ -31,19 +34,42 @@ function processSN (query) {
       .replaceAll(':', '" "')
     +'"';
 }
+*/
+
+// Load a new sqlite database of signs into elasticsearch
+export async function index_db () {
+    const db = new Database(process.env.DB_PATH);
+    if (await elasticsearch.indices.exists({ index: 'signs' })) {
+        await elasticsearch.indices.delete({ index: 'signs' });
+    }
+    await elasticsearch.indices.create({ index: 'signs' });
+    const signs = db.prepare(`SELECT * FROM signs`);
+    const definitions = db.prepare(`SELECT content FROM attachments
+        WHERE sign = ? AND type = 'definition'
+        ORDER BY id ASC`);
+    for (const s of signs.all()) {
+        s.acepciones = definitions.all(s.number);
+        elasticsearch.index({
+            index: 'signs',
+            id: s.number,
+            document: s
+        });
+    }
+}
 
 export function searchSN (query, limit) {
-    return queries.searchSN.all(processSN(query), limit);
+    return [];
 }
 
 export function searchSpa (query, limit) {
-    return queries.searchSpa.all(query, limit);
+    return [];
 }
 
-export function getSign (number) {
-    return queries.getSign.get(number);
-}
-
-export function getDefinitions (number) {
-    return queries.getDefinitions.all(number);
+export async function getSign (number) {
+    try {
+        const s = await elasticsearch.get({ index: 'signs', id: number });
+        return s._source;
+    } catch (error) {
+        return null;
+    }
 }

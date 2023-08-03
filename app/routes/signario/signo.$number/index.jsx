@@ -2,7 +2,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useRef, useEffect } from "react";
 
-import { getSign, getDefinitions } from "../../../db.server.js"; 
+import { getSign } from "../../../db.server.js"; 
 import markdown from "../../../markdown.server.js";
 
 export function meta ({ data }) {
@@ -10,10 +10,13 @@ export function meta ({ data }) {
 }
 
 export async function loader ({ params }) {
-    const sign = getSign(params.number);
+    const sign = await getSign(params.number);
     if (!sign) throw new Response("", { status: 404 });
-    sign.acepciones = getDefinitions(params.number).map(d => markdown(d.content));
-    if (sign.acepciones.length == 0) sign.acepciones = [sign.gloss];
+    if (sign.acepciones.length == 0) {
+        sign.acepciones = [sign.gloss];
+    } else {
+        sign.acepciones = sign.acepciones.map(d => markdown(d.content));
+    }
     return json(sign);
 }
 
