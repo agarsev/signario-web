@@ -3,16 +3,21 @@ import Database from 'better-sqlite3';
 import { Client } from '@elastic/elasticsearch';
 export const elasticsearch = new Client({
     node: process.env.ELASTICSEARCH_URL,
+    defaultIndex: 'signario',
+    auth: {
+        username: 'signario',
+        password: process.env.ELASTICSEARCH_PASSWORD
+    }
 })
 
 // Load a new sqlite database of signs into elasticsearch
 export async function index_db () {
     const db = new Database(process.env.DB_PATH);
-    if (await elasticsearch.indices.exists({ index: 'signs' })) {
-        await elasticsearch.indices.delete({ index: 'signs' });
+    if (await elasticsearch.indices.exists({ index: 'signario' })) {
+        await elasticsearch.indices.delete({ index: 'signario' });
     }
     await elasticsearch.indices.create({
-        index: 'signs',
+        index: 'signario',
         settings: {
             max_ngram_diff: 2,
             analysis: {
@@ -60,7 +65,7 @@ export async function index_db () {
     for (const s of signs.all()) {
         s.definitions = definitions.all(s.number);
         elasticsearch.index({
-            index: 'signs',
+            index: 'signario',
             id: s.number,
             document: s
         });
@@ -86,7 +91,7 @@ export async function searchSpa (query, limit) {
 
 export async function getSign (number) {
     try {
-        const s = await elasticsearch.get({ index: 'signs', id: number });
+        const s = await elasticsearch.get({ index: 'signario', id: number });
         return s._source;
     } catch (error) {
         return null;
