@@ -45,7 +45,7 @@ export function PreguntonE ({ setSN }) {
 const DEFAULT_G = { g: "", forearm: false };
 
 export function PreguntonG ({ setSN, detailed }) {
-    const [{g, forearm}, dispatch] = useObsReducer(DEFAULT_G, undefined, setSN);
+    const [{g, forearm}, dispatch] = useObsReducer(DEFAULT_G, (s, a) => ({...s, ...a}), setSN);
     return <>
         <h3>¿<em>Gira</em> la orientación de la mano?</h3>
         <select value={g} autoComplete="off"

@@ -7,15 +7,9 @@ import { PreguntonE, PreguntonG, PreguntonD } from "./pregunton/dynams";
 
 const DEFAULT_SN = {
     prefix: "",
-    q: "",
-    o: "",
-    l: "",
-    lfore: false,
-    e: "",
-    g: "",
-    gfore: false,
-    d: "",
-    l2: "",
+    q: "", o: "", l: "", lfore: false,
+    e: "", g: "", gfore: false, d: "",
+    l2: "", h2: "", r: "",
 }
 
 function reducer (SN, action) {
@@ -69,6 +63,10 @@ export function Pregunton ({ setSN }) {
         <PreguntonD detailed={detailed}
             setSN={value => dispatch({ action: "despl", value })} />
 
+        <h2>Silábicos</h2>
+        <PreguntonH2 setSN={value => dispatch({ action: "segment", segment: "h2", value })} />
+        {detailed?<PreguntonR setSN={value => dispatch({ action: "segment", segment: "r", value })} />:null}
+
         <p className="text-right italic text-stone-600 mt-3">
             <label>Avanzado
             <input className="ml-2" type="checkbox"
@@ -78,5 +76,34 @@ export function Pregunton ({ setSN }) {
 }
 
 function signotation (SN) {
-    return [SN.prefix+SN.q, SN.o, SN.l, SN.e, SN.g, SN.d, SN.l2].filter(x => !!x).join(":");
+    return [SN.prefix+SN.q, SN.o, SN.l,
+        SN.e, SN.g, SN.d,
+        SN.l2, SN.h2, SN.r].filter(x => !!x).join(":");
+}
+
+function PreguntonH2 ({ setSN }) {
+    const [h2, dispatch] = useObsReducer("", (_,x) => x, setSN);
+    return <>
+        <h3>¿La otra mano se mueve?</h3>
+        <select value={h2} autoComplete="off"
+            onChange={e => dispatch(e.target.value)}>
+            <option value="">No</option>
+            <option value="=">Sí, igual que la dominante</option>
+            <option value="~">Sí, pero al contrario que la dominante</option>
+            <option value="&">Sí, como una unidad junto a la dominante</option>
+        </select>
+    </>;
+}
+
+function PreguntonR ({ setSN }) {
+    const [r, dispatch] = useObsReducer("", (_,x) => x, setSN);
+    return <>
+        <h3>¿Se repite el movimiento?</h3>
+        <select value={r} autoComplete="off"
+            onChange={e => dispatch(e.target.value)}>
+            <option value="">No</option>
+            <option value="R">Sí</option>
+            <option value="N">Se deshace y rehace el movimiento</option>
+        </select>
+    </>;
 }

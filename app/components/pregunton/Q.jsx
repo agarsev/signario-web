@@ -90,18 +90,18 @@ export function PreguntonQ ({ detailed, setSN }) {
             "-": "Juntos lateralmente",
             "x": "Cruzados",
         }} feature="touch" />
-        <YesNo condition={detailed && q.fingers.P} checked={q.opo}
+        <p><YesNo condition={detailed && q.fingers.P} checked={q.opo}
             onChange={() => dispatch({ action: "feature", feature: "opo", value: !q.opo})}>
-            El pulgar está opuesto a los demás dedos</YesNo>
+            El pulgar está opuesto a los demás dedos</YesNo></p>
         <Question text="¿El pulgar toca otros dedos?"
             condition={detailed && q.opo} opts={{
             "": "No",
             "+": "Sí, en la yema (pinza)",
             "-": "Sí, en el medio del dedo",
         }} feature="touch" />
-        <YesNo condition={detailed && manyFingers>0 && manyFingers<5} checked={q.others}
+        <p><YesNo condition={detailed && manyFingers>0 && manyFingers<5} checked={q.others}
             onChange={() => dispatch({ action: "feature", feature: "others", value: !q.others})}>
-            Los demás dedos están estirados</YesNo>
+            Los demás dedos están estirados</YesNo></p>
     </>;
 }
 

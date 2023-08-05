@@ -30,7 +30,7 @@ export function YesNo ({ condition=true, checked, onChange, children }) {
     </label>;
 }
 
-export function useObsReducer(DEF, reducer = (s,a) => ({...s, ...a}), observer) {
+export function useObsReducer(DEF, reducer, observer) {
     const [state, setState] = useState(DEF);
     const dispatch = action => {
         const nState = reducer(state, action);
