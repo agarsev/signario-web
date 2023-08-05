@@ -24,13 +24,13 @@ export const absSpaces = {
 
 export function YesNo ({ condition=true, checked, onChange, children }) {
     if (!condition) return null;
-    return <p><label>
+    return <label>
         <input type="checkbox" checked={checked} onChange={onChange} />
         {children}
-    </label></p>;
+    </label>;
 }
 
-export function useObsReducer(DEF, reducer, observer) {
+export function useObsReducer(DEF, reducer = (s,a) => ({...s, ...a}), observer) {
     const [state, setState] = useState(DEF);
     const dispatch = action => {
         const nState = reducer(state, action);

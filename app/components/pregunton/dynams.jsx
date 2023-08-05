@@ -1,8 +1,6 @@
-import { YesNo, useObsReducer } from "./common";
+import { YesNo, useObsReducer, Options, absSpaces } from "./common";
 
-const DEFAULT_E = {
-    evo: "", accent: ""
-}
+const DEFAULT_E = { evo: "", accent: "" }
 
 function eReducer (E, action) {
     const nE = {...E}; 
@@ -23,7 +21,7 @@ export function PreguntonE ({ setSN }) {
     const [{evo, accent}, dispatch] = useObsReducer(DEFAULT_E, eReducer,
         ({evo, accent}) => setSN(evo+accent));
     return <>
-        <h3>¿Evoluciona la flexión de los dedos?</h3>
+        <h3>¿<em>Evoluciona</em> la flexión de los dedos?</h3>
         <select value={evo} autoComplete="off"
             onChange={e => dispatch({evo: e.target.value})}>
             <option value="">No</option>
@@ -33,34 +31,23 @@ export function PreguntonE ({ setSN }) {
             <option value="7">Se doblan por la base, rectos</option>
             <option value="^">Se doblan por el nudillo, como una garra</option>
         </select>
-        <YesNo condition={evo==""||evo=="<"||evo==">"} checked={accent=="w"}
-            onChange={() => dispatch({accent: "w"})}>
-            ondulando</YesNo>
-        <YesNo condition={evo==""} checked={accent=="-"}
-            onChange={() => dispatch({accent: "-"})}>
-            se juntan lateralmente</YesNo>
+        <p>
+            <YesNo condition={evo==""||evo=="<"||evo==">"} checked={accent=="w"}
+                onChange={() => dispatch({accent: "w"})}>
+                ondulando</YesNo>
+            <YesNo condition={evo==""} checked={accent=="-"}
+                onChange={() => dispatch({accent: "-"})}>
+                se juntan lateralmente</YesNo>
+        </p>
     </>;
 }
 
-const DEFAULT_G = {
-    g: "", forearm: false
-}
-
-function gReducer (G, action) {
-    const nG = {...G}; 
-    if (action.g !== undefined) {
-        nG.g = action.g;
-    } else {
-        nG.forearm = !nG.forearm;
-    }
-    return nG;
-}
+const DEFAULT_G = { g: "", forearm: false };
 
 export function PreguntonG ({ setSN, detailed }) {
-    const [{g, forearm}, dispatch] = useObsReducer(DEFAULT_G, gReducer,
-        ({g, forearm}) => setSN([forearm, g]));
+    const [{g, forearm}, dispatch] = useObsReducer(DEFAULT_G, undefined, setSN);
     return <>
-        <h3>¿Cambia la orientación de la mano?</h3>
+        <h3>¿<em>Gira</em> la orientación de la mano?</h3>
         <select value={g} autoComplete="off"
             onChange={e => dispatch({g: e.target.value})}>
             <option value="">No</option>
@@ -69,8 +56,44 @@ export function PreguntonG ({ setSN, detailed }) {
             <option value="/">La mano se inclina lateralmente (como en HOLA)</option>
             <option value="8">La mano rota sobre la muñeca haciendo círculos</option>
         </select>
-        <YesNo condition={detailed} checked={forearm}
-            onChange={() => dispatch({forearm})}>
-            El giro afecta a todo el brazo desde el codo (no sólo a la mano)</YesNo>
+        <p><YesNo condition={detailed} checked={forearm}
+            onChange={() => dispatch({forearm: !forearm})}>
+            El giro afecta a todo el brazo desde el codo (no sólo a la mano)
+        </YesNo></p>
+    </>;
+}
+
+const DEFAULT_D = { d: "", l2: "", l2c: false };
+
+function dReducer (D, action) {
+    const nD = {...D, ...action}; 
+    if (nD.d == "" || nD.d == "(,)") {
+        nD.l2 = "";
+        nD.l2c = false;
+    }
+    return nD;
+}
+
+export function PreguntonD ({ setSN, detailed }) {
+    const [{d, l2, l2c}, dispatch] = useObsReducer(DEFAULT_D, dReducer,
+        ({d, l2, l2c}) => setSN([d, l2+(l2c?"*":"")]));
+    return <>
+        <h3>¿Se <em>desplaza</em> la mano a otro sitio?</h3>
+        <select value={d} autoComplete="off"
+            onChange={e => dispatch({d: e.target.value})}>
+            <option value="">No</option>
+            <option value="->">Sí, en línea recta</option>
+            <option value="()">Sí, en línea curva</option>
+            <option value="(,)">La mano describe un círculo completo y vuelve a su sitio</option>
+        </select>
+        {detailed?<>
+            <p>El destino del movimiento es hacia&nbsp;
+            <select value={l2} autoComplete="off" onChange={e => dispatch({l2: e.target.value})}>
+                <option value="">No sé</option>
+                <Options opts={absSpaces} />
+            </select></p>
+        <YesNo condition={l2!="" && l2!="(,)"} checked={l2c} onChange={() => dispatch({l2c: !l2c})}>
+            La mano hace contacto en algún sitio en su destino</YesNo>
+        </>:null}
     </>;
 }

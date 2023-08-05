@@ -3,7 +3,7 @@ import { useObsReducer } from "./pregunton/common";
 import { PreguntonQ } from "./pregunton/Q";
 import { PreguntonO } from "./pregunton/O";
 import { PreguntonL } from "./pregunton/L";
-import { PreguntonE, PreguntonG } from "./pregunton/dynams";
+import { PreguntonE, PreguntonG, PreguntonD } from "./pregunton/dynams";
 
 const DEFAULT_SN = {
     prefix: "",
@@ -14,6 +14,8 @@ const DEFAULT_SN = {
     e: "",
     g: "",
     gfore: false,
+    d: "",
+    l2: "",
 }
 
 function reducer (SN, action) {
@@ -27,8 +29,12 @@ function reducer (SN, action) {
             ret = { ...SN, lfore, l };
             break;
         case "giro":
-            const [gfore, g] = action.value;
+            const {g, forearm: gfore} = action.value;
             ret = { ...SN, gfore, g };
+            break;
+        case "despl":
+            const [d, l2] = action.value;
+            ret = { ...SN, d, l2 };
             break;
         default:
             console.error("UNKNOWN ACTION", action, SN);
@@ -56,11 +62,12 @@ export function Pregunton ({ setSN }) {
         <PreguntonL detailed={detailed}
             setSN={value => dispatch({ action: "lugar", value })} />
 
-        <h2>E (evolución)</h2>
+        <h2>Dinamismos</h2>
         <PreguntonE setSN={value => dispatch({ action: "segment", segment: "e", value })} />
-        <h2>G (giro)</h2>
         <PreguntonG detailed={detailed}
             setSN={value => dispatch({ action: "giro", value })} />
+        <PreguntonD detailed={detailed}
+            setSN={value => dispatch({ action: "despl", value })} />
 
         <p className="text-right italic text-stone-600 mt-3">
             <label>Avanzado
@@ -71,5 +78,5 @@ export function Pregunton ({ setSN }) {
 }
 
 function signotation (SN) {
-    return [SN.prefix+SN.q, SN.o, SN.l, SN.e, SN.g].filter(x => !!x).join(":");
+    return [SN.prefix+SN.q, SN.o, SN.l, SN.e, SN.g, SN.d, SN.l2].filter(x => !!x).join(":");
 }

@@ -51,7 +51,7 @@ export function PreguntonQ ({ detailed, setSN }) {
 
     function Finger ({ name, val }) {
         const unset = !q.fingers[val];
-        return <label className="mr-2">
+        return <label>
             <input type="checkbox" checked={!unset} autoComplete="off"
                 onChange={() => dispatch({ action: "finger", finger: val, value: unset })} />
             {name}</label>;

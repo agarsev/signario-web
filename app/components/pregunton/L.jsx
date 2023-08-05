@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Options, YesNo } from "./common";
+import { Options, YesNo, useObsReducer } from "./common";
 
 const DEFAULT_L = {
     locus: "",
@@ -22,12 +21,8 @@ function reducer (l, action) {
 
 export function PreguntonL ({ setSN, detailed }) {
 
-    const [l, setL] = useState(DEFAULT_L);
-    const dispatch = action => {
-        const nl = reducer(l, action);
-        setL(nl);
-        setSN(signotation(nl));
-    }
+    const [l, dispatch] = useObsReducer(DEFAULT_L, reducer,
+        nl => setSN(signotation(nl)));
 
     const sep = <option disabled>──────────</option>;
 
@@ -122,4 +117,3 @@ const lugaresExt = {
         "TriY": "en el mismo lado que la mano",
     },
 };
-

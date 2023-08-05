@@ -19,7 +19,7 @@ export function PreguntonO ({ setSN }) {
     return <>
         <h3>¿Hacia dónde apunta la mano?</h3>
         <span className="mr-3">La palma hacia <OSel dir={palmar} setDir={setPalmar} /></span>
-        <span>El <HelpText text="eje distal" help="Donde apuntan los dedos si están estirados" /> hacia
+        <span>El <HelpText text="eje distal" help="Donde apuntan los dedos si están estirados" /> hacia&nbsp;
             <OSel dir={distal} setDir={setDistal} />
         </span>
     </>;

@@ -32,9 +32,10 @@
 @layer components {
 
     .Pregunton { @apply text-stone-700; }
-    .Pregunton h2 { @apply italic text-stone-600 text-center border-b border-stone-300 my-1; }
-    .Pregunton h3 { @apply font-bold text-stone-800 my-1; }
+    .Pregunton h2 { @apply italic text-stone-600 text-center border-b border-stone-300 mt-3 mb-1; }
+    .Pregunton h3 { @apply font-bold text-stone-800; }
     .Pregunton input[type=checkbox] { @apply mr-1; }
     .Pregunton select { @apply bg-stone-50 mr-1 border-b border-orange-300; }
+    .Pregunton label + label { @apply ml-3; }
 
 }
