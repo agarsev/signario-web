@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Options } from "./common";
+import { Options, YesNo } from "./common";
 
 const DEFAULT_L = {
     locus: "",
@@ -31,15 +31,6 @@ export function PreguntonL ({ setSN, detailed }) {
 
     const sep = <option disabled>──────────</option>;
 
-    function YesNo ({ condition=true, feature, children }) {
-        if (!condition) return null;
-        return <p><label>
-            <input type="checkbox" checked={l[feature]}
-            onChange={() => dispatch({ action: "feature", feature, value: !l[feature]})} />
-            {children}
-        </label></p>;
-    }
-
     return <>
         <h3>¿Dónde se encuentra la mano?</h3>
         <select value={l.locus} autoComplete="off"
@@ -54,20 +45,21 @@ export function PreguntonL ({ setSN, detailed }) {
             onChange={e => dispatch({action: "feature", feature: "locus2", value: e.target.value})}>
             <Options opts={lugaresExt[l.locus]} />
         </select>:null}
-        <YesNo feature="cAtk">tocando</YesNo>
+        <YesNo onChange={() => dispatch({ action: "feature", feature: "cAtk", value: !l.cAtk})}
+            checked={l.cAtk}>tocando</YesNo>
     </>;
 }
 
 function signotation (l) {
-    const snq = l.locus == "_" ? "_" : "";
+    const fore = l.locus == "_";
     let snl;
-    if (l.locus == "H2" || l.locus == "_") {
+    if (l.locus == "H2" || fore) {
         snl = "[]";
     } else {
         snl = l.locus2 || l.locus;
     }
     if (l.cAtk) snl += "*";
-    return [snq, snl];
+    return [fore, snl];
 }
 
 const lugaresX = {

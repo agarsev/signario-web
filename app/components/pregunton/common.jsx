@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export function Options ({ opts, prefix = "" }) {
     return Object.keys(opts).map(key => <option key={prefix+key} value={prefix+key}>
         {opts[key]}
@@ -18,4 +20,22 @@ export const absSpaces = {
     "B": "Atrás",
     "Y": "La derecha",
     "X": "La izquierda",
+}
+
+export function YesNo ({ condition=true, checked, onChange, children }) {
+    if (!condition) return null;
+    return <p><label>
+        <input type="checkbox" checked={checked} onChange={onChange} />
+        {children}
+    </label></p>;
+}
+
+export function useObsReducer(DEF, reducer, observer) {
+    const [state, setState] = useState(DEF);
+    const dispatch = action => {
+        const nState = reducer(state, action);
+        setState(nState);
+        observer(nState);
+    }
+    return [state, dispatch];
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { YesNo } from "./common";
 
 const DEFAULT_Q = {
     fingers: {},
@@ -65,15 +66,6 @@ export function PreguntonQ ({ detailed, setSN }) {
         </select></p>;
     }
 
-    function YesNo ({ condition, text, feature }) {
-        if (!condition) return null;
-        return <p><label>
-            <input type="checkbox" checked={q[feature]}
-            onChange={() => dispatch({ action: "feature", feature, value: !q[feature]})} />
-            {text}
-        </label></p>;
-    }
-
     return <>
         <h3>¿Cuáles son los dedos seleccionados?</h3>
         <label className="mr-2">
@@ -98,16 +90,18 @@ export function PreguntonQ ({ detailed, setSN }) {
             "-": "Juntos lateralmente",
             "x": "Cruzados",
         }} feature="touch" />
-        <YesNo text="El pulgar está opuesto a los demás dedos" feature="opo"
-            condition={detailed && q.fingers.P} />
+        <YesNo condition={detailed && q.fingers.P} checked={q.opo}
+            onChange={() => dispatch({ action: "feature", feature: "opo", value: !q.opo})}>
+            El pulgar está opuesto a los demás dedos</YesNo>
         <Question text="¿El pulgar toca otros dedos?"
             condition={detailed && q.opo} opts={{
             "": "No",
             "+": "Sí, en la yema (pinza)",
             "-": "Sí, en el medio del dedo",
         }} feature="touch" />
-        <YesNo text="Los demás dedos están estirados" feature="others"
-            condition={detailed && manyFingers>0 && manyFingers<5} />
+        <YesNo condition={detailed && manyFingers>0 && manyFingers<5} checked={q.others}
+            onChange={() => dispatch({ action: "feature", feature: "others", value: !q.others})}>
+            Los demás dedos están estirados</YesNo>
     </>;
 }
 

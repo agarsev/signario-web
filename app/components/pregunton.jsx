@@ -1,35 +1,47 @@
 import { useState } from "react";
+import { useObsReducer } from "./pregunton/common";
 import { PreguntonQ } from "./pregunton/Q";
 import { PreguntonO } from "./pregunton/O";
 import { PreguntonL } from "./pregunton/L";
+import { PreguntonE, PreguntonG } from "./pregunton/dynams";
 
 const DEFAULT_SN = {
     prefix: "",
     q: "",
     o: "",
     l: "",
+    lfore: false,
+    e: "",
+    g: "",
+    gfore: false,
 }
 
 function reducer (SN, action) {
+    let ret;
     switch (action.action) {
         case "segment":
-            return { ...SN, [action.segment]: action.value };
+            ret = { ...SN, [action.segment]: action.value };
+            break;
         case "lugar":
-            const [prefix, l] = action.value;
-            return { ...SN, prefix, l };
+            const [lfore, l] = action.value;
+            ret = { ...SN, lfore, l };
+            break;
+        case "giro":
+            const [gfore, g] = action.value;
+            ret = { ...SN, gfore, g };
+            break;
+        default:
+            console.error("UNKNOWN ACTION", action, SN);
+            return SN;
     }
-    console.error("UNKNOWN ACTION", action, SN);
+    ret.prefix = ret.lfore || ret.gfore ? "_" : "";
+    return ret;
 }
 
 export function Pregunton ({ setSN }) {
     const [detailed, setDets] = useState(false);
-
-    const [SN, _setSN] = useState(DEFAULT_SN);
-    const dispatch = action => {
-        const nSN = reducer(SN, action);
-        _setSN(nSN);
-        setSN(signotation(nSN));
-    }
+    const [SN, dispatch] = useObsReducer(DEFAULT_SN, reducer,
+        sn => setSN(signotation(sn)));
 
     return <form className="Pregunton mt-8 mb-2">
 
@@ -44,6 +56,12 @@ export function Pregunton ({ setSN }) {
         <PreguntonL detailed={detailed}
             setSN={value => dispatch({ action: "lugar", value })} />
 
+        <h2>E (evolución)</h2>
+        <PreguntonE setSN={value => dispatch({ action: "segment", segment: "e", value })} />
+        <h2>G (giro)</h2>
+        <PreguntonG detailed={detailed}
+            setSN={value => dispatch({ action: "giro", value })} />
+
         <p className="text-right italic text-stone-600 mt-3">
             <label>Avanzado
             <input className="ml-2" type="checkbox"
@@ -53,5 +71,5 @@ export function Pregunton ({ setSN }) {
 }
 
 function signotation (SN) {
-    return [SN.prefix+SN.q, SN.o, SN.l].filter(x => !!x).join(":");
+    return [SN.prefix+SN.q, SN.o, SN.l, SN.e, SN.g].filter(x => !!x).join(":");
 }
