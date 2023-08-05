@@ -43,16 +43,12 @@ export function Pregunton ({ setSN }) {
     const [SN, dispatch] = useObsReducer(DEFAULT_SN, reducer,
         sn => setSN(signotation(sn)));
 
-    return <form className="Pregunton mt-8 mb-2">
+    return <form className="Pregunton mt-4 mb-2">
 
-        <h2>Q (configuración)</h2>
+        <h2>Mano principal</h2>
         <PreguntonQ detailed={detailed}
             setSN={value => dispatch({ action: "segment", segment: "q", value })} />
-        {detailed?<>
-            <h2>O (orientación)</h2>
-            <PreguntonO setSN={value => dispatch({ action: "segment", segment: "o", value })} />
-        </>:null}
-        <h2>L (lugar)</h2>
+        {detailed?<PreguntonO setSN={value => dispatch({ action: "segment", segment: "o", value })} />:null}
         <PreguntonL detailed={detailed}
             setSN={value => dispatch({ action: "lugar", value })} />
 
@@ -63,7 +59,7 @@ export function Pregunton ({ setSN }) {
         <PreguntonD detailed={detailed}
             setSN={value => dispatch({ action: "despl", value })} />
 
-        <h2>Silábicos</h2>
+        <h2>Otros</h2>
         <PreguntonH2 setSN={value => dispatch({ action: "segment", segment: "h2", value })} />
         {detailed?<PreguntonR setSN={value => dispatch({ action: "segment", segment: "r", value })} />:null}
 

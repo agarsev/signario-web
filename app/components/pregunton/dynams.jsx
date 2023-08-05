@@ -21,7 +21,7 @@ export function PreguntonE ({ setSN }) {
     const [{evo, accent}, dispatch] = useObsReducer(DEFAULT_E, eReducer,
         ({evo, accent}) => setSN(evo+accent));
     return <>
-        <h3>¿<em>Evoluciona</em> la flexión de los dedos?</h3>
+        <h3>¿Evoluciona la flexión de los dedos?</h3>
         <select value={evo} autoComplete="off"
             onChange={e => dispatch({evo: e.target.value})}>
             <option value="">No</option>
@@ -47,7 +47,7 @@ const DEFAULT_G = { g: "", forearm: false };
 export function PreguntonG ({ setSN, detailed }) {
     const [{g, forearm}, dispatch] = useObsReducer(DEFAULT_G, (s, a) => ({...s, ...a}), setSN);
     return <>
-        <h3>¿<em>Gira</em> la orientación de la mano?</h3>
+        <h3>¿Gira la orientación de la mano?</h3>
         <select value={g} autoComplete="off"
             onChange={e => dispatch({g: e.target.value})}>
             <option value="">No</option>
@@ -78,7 +78,7 @@ export function PreguntonD ({ setSN, detailed }) {
     const [{d, l2, l2c}, dispatch] = useObsReducer(DEFAULT_D, dReducer,
         ({d, l2, l2c}) => setSN([d, l2+(l2c?"*":"")]));
     return <>
-        <h3>¿Se <em>desplaza</em> la mano a otro sitio?</h3>
+        <h3>¿Se desplaza la mano a otro sitio?</h3>
         <select value={d} autoComplete="off"
             onChange={e => dispatch({d: e.target.value})}>
             <option value="">No</option>
