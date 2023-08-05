@@ -70,14 +70,14 @@ const lugaresBod = {
     "Cab": "En la cabeza",
     "Fre": "En la frente",
     "Car": "En la cara",
-    "Ore": "En la oreja",
-    "Ojo": "En los ojos",
+    "OreY": "En la oreja",
+    "OjoY": "En los ojos",
     "Nar": "En la nariz",
     "Boc": "En la boca",
-    "Mej": "En la mejilla",
+    "MejY": "En la mejilla",
     "Bar": "En la barbilla",
     "Cue": "En el cuello",
-    "Hom": "En el hombro",
+    "HomY": "En el hombro",
     "Pec": "En el pecho",
     "Tri": "En la tripa",
 };
@@ -86,25 +86,32 @@ const lugaresBod = {
 const lugaresExt = {
     "Cab": {
         "Cab": "por arriba en el centro",
-        "Sie": "por arriba hacia el lado, en la sien",
-        "Nuc": "por detrás, en la nuca",
+        "CabY": "por arriba hacia el lado, en la sien",
+        "CabB": "por detrás, en la nuca",
     },
-    "Ojo": {
-        "Ojo": "en los dos a la vez",
+    "OjoY": {
         "OjoY": "el del mismo lado que la mano",
         "OjoX": "el del lado contrario que la mano",
+    },
+    "Nar": {
+        "Nar": "por delante",
+        "NarY": "al lado",
     },
     "Boc": {
         "Boc": "en el centro",
         "BocY": "hacia el lado, en la comisura",
+    },
+    "Bar": {
+        "Bar": "por delante",
+        "BarL": "debajo",
     },
     "Cue": {
         "Cue": "en el centro",
         "CueY": "en el mismo lado que la mano",
         "CueX": "en el lado contrario que la mano",
     },
-    "Hom": {
-        "Hom": "el del mismo lado que la mano",
+    "HomY": {
+        "HomY": "el del mismo lado que la mano",
         "HomX": "el del lado contrario que la mano",
     },
     "Pec": {

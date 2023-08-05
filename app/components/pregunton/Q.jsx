@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { YesNo } from "./common";
+import { YesNo, useObsReducer } from "./common";
 
 const DEFAULT_Q = {
     fingers: {},
@@ -40,12 +40,8 @@ function reducer (q, action) {
 
 export function PreguntonQ ({ detailed, setSN }) {
 
-    const [q, setQ] = useState(DEFAULT_Q);
-    const dispatch = action => {
-        const nq = reducer(q, action);
-        setQ(nq);
-        setSN(signotation(nq));
-    }
+    const [q, dispatch] = useObsReducer(DEFAULT_Q, reducer,
+        q => setSN(signotation(q)));
 
     const manyFingers = count(q.fingers);
 
@@ -115,7 +111,7 @@ function signotation (q) {
     if (q.fingers.P) sn = (q.opo?"p":"P") + sn;
     if (q.touch == "x") sn = sn.split("").reverse().join("");
     else if (q.flex != "c" && !ext) sn += q.flex;
-    sn += q.touch;
+    if (q.touch != "x") sn += q.touch;
     if (q.others) sn += "O";
     return sn;
 }
