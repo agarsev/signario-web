@@ -51,10 +51,10 @@ export function PreguntonG ({ setSN, detailed }) {
         <select value={g} autoComplete="off"
             onChange={e => dispatch({g: e.target.value})}>
             <option value="">No</option>
-            <option value="$">La mano rota sobre el eje del antebrazo</option>
+            <option value="$">La mano rota sobre el antebrazo</option>
             <option value="%">La muñeca se abate</option>
-            <option value="/">La mano se inclina lateralmente (como en HOLA)</option>
-            <option value="8">La mano rota sobre la muñeca haciendo círculos</option>
+            <option value="/">La mano se inclina lateralmente</option>
+            <option value="8">La muñeca rota haciendo círculos</option>
         </select>
         <p><YesNo condition={detailed} checked={forearm}
             onChange={() => dispatch({forearm: !forearm})}>
@@ -84,7 +84,7 @@ export function PreguntonD ({ setSN, detailed }) {
             <option value="">No</option>
             <option value="->">Sí, en línea recta</option>
             <option value="()">Sí, en línea curva</option>
-            <option value="(,)">La mano describe un círculo completo y vuelve a su sitio</option>
+            <option value="(,)">Sí, describe un círculo completo</option>
         </select>
         {detailed?<>
             <p>El destino del movimiento es hacia&nbsp;

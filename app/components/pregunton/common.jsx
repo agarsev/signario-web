@@ -24,7 +24,7 @@ export const absSpaces = {
 
 export function YesNo ({ condition=true, checked, onChange, children }) {
     if (!condition) return null;
-    return <label>
+    return <label className="whitespace-nowrap">
         <input type="checkbox" checked={checked} onChange={onChange} />
         {children}
     </label>;

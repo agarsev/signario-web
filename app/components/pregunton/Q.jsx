@@ -47,10 +47,13 @@ export function PreguntonQ ({ detailed, setSN }) {
 
     function Finger ({ name, val }) {
         const unset = !q.fingers[val];
-        return <label>
+        return <>
+            <span className="whitespace-normal ml-2"> </span>
+            <label className="whitespace-nowrap">
             <input type="checkbox" checked={!unset} autoComplete="off"
                 onChange={() => dispatch({ action: "finger", finger: val, value: unset })} />
-            {name}</label>;
+            {name}</label>
+        </>; // the span is to fix some weird no breaking behaviour in firefox
     }
 
     function Question ({ condition, text, opts, feature }) {
@@ -64,10 +67,10 @@ export function PreguntonQ ({ detailed, setSN }) {
 
     return <>
         <h3>¿Cuáles son los dedos seleccionados?</h3>
-        <label className="mr-2">
+        <label className="whitespace-nowrap">
             <input type="checkbox" checked={!manyFingers}
                 onChange={() => dispatch({ action: "set", q: DEFAULT_Q })} />
-            No sé</label>
+                No sé</label>
         <Finger name="Pulgar" val="P" />
         <Finger name="Índice" val="I" />
         <Finger name="Corazón" val="C" />

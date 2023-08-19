@@ -80,7 +80,9 @@ function Snippet ({ sign }) {
         <video className="w-[200px] float-right -mt-4" muted loop ref={vid}>
             <source src={`/signario/signo/${sign.number}/video.mp4`} />
         </video>
-        <span className="font-bold text-orange-700 mb-1">{sign.notation}</span>
+        <p className="mb-1 inline-block max-w-0">
+            <span className="font-bold text-orange-700 bg-stone-50/70 pr-1 rounded whitespace-pre">{sign.notation}</span>
+        </p>
         <span className="pl-3 text-stone-900"
             dangerouslySetInnerHTML={{__html: sign.heading}} />
     </Link>;
