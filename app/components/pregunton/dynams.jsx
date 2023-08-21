@@ -58,7 +58,8 @@ export function PreguntonG ({ setSN, detailed }) {
         </select>
         <p><YesNo condition={detailed} checked={forearm}
             onChange={() => dispatch({forearm: !forearm})}>
-            El giro afecta a todo el brazo desde el codo (no sólo a la mano)
+            El giro afecta <span className="whitespace-normal">a todo el brazo
+                desde el codo (no sólo a la mano)</span>
         </YesNo></p>
     </>;
 }
