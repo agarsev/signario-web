@@ -22,7 +22,12 @@ export async function index_db () {
             max_ngram_diff: 2,
             analysis: {
                 analyzer: {
-                    signotation: {
+                    signotation_segments: {
+                        type: 'pattern',
+                        pattern: '[: \\[\\]]',
+                        lowercase: false
+                    },
+                    signotation_ngrams: {
                         type: 'custom',
                         char_filter: ['sn_charfilter'],
                         tokenizer: 'sn_tokenizer',
@@ -32,7 +37,10 @@ export async function index_db () {
                 char_filter: {
                     sn_charfilter: {
                         type: "mapping",
-                        mappings: [": =>"]
+                        mappings: [
+                            ": =>",
+                            "-> => →"
+                        ]
                     }
                 },
                 tokenizer: {
@@ -48,7 +56,8 @@ export async function index_db () {
         mappings: {
             dynamic: false,
             properties: {
-                notation: { type: 'text', analyzer: 'signotation' },
+                notation: { type: 'text', analyzer: 'signotation_segments', copy_to: 'sngrams' },
+                sngrams: { type: 'text', analyzer: 'signotation_ngrams' },
                 gloss: { type: 'text', analyzer: 'spanish', copy_to: 'oral' },
                 definitions: { type: 'nested', properties: {
                     content: { type: 'text', analyzer: 'spanish', copy_to: 'oral' }
@@ -75,7 +84,12 @@ export async function index_db () {
 
 export async function searchSN (query, limit) {
     const res = await elasticsearch.search({
-        query: { match: { notation: { query, fuzziness: "1" }}},
+        query: { multi_match: {
+            query,
+            fields: [ 'notation', 'sngrams' ],
+            type: 'most_fields',
+            fuzziness: '1'
+        }},
         size: limit,
     });
     return res.hits.hits.map(doc => doc._source);
@@ -83,7 +97,7 @@ export async function searchSN (query, limit) {
 
 export async function searchSpa (query, limit) {
     const res = await elasticsearch.search({
-        query: { match: { oral: { query, fuzziness: "1" }}},
+        query: { match: { oral: { query, fuzziness: '1' }}},
         size: limit,
     });
     return res.hits.hits.map(doc => doc._source);
