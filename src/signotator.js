@@ -648,7 +648,7 @@ function Syllab({ done, options }) {
       ret.push(sym);
     if (rep)
       ret.push(rep);
-    done(ret.length > 0 ? ret.join(":") : "", "Q");
+    done(ret.length > 0 ? ret.join(":") + " " : " ", "Q");
   };
   return <div><table><tbody>
     <tr>
@@ -798,7 +798,6 @@ function Signotator({ inputRef, updateVal }) {
   return <div className="Signotator" onClick={(e) => {
     e.preventDefault();
     e.stopPropagation();
-    inputRef.current.focus();
   }}>
     <nav>{Object.keys(tabs).map((seg) => <button
       key={seg}
