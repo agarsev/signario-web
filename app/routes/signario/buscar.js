@@ -12,7 +12,13 @@ export async function loader ({ request }) {
     }
     const limit = params.get("limit") || MAX_RESULTS;
     const signs = await searchSN(notation, limit)
-    return json({ signs: signs.map(sign_response) });
+    return json({ 
+        signs: signs.map(sign_response)
+    }, {
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+        },
+    });
 }
 
 function sign_response ({ gloss, notation, number }) {
